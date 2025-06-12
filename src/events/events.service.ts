@@ -30,7 +30,7 @@ export class EventsService {
 
       const fileId = image.fileId;
 
-      // TODO::  save for later src={`https://drive.google.com/uc?export=view&id=${image.id}`}
+      // TODO::  save cool for later src={`https://drive.google.com/uc?export=view&id=${image.id}`}
       const slug: string = createSlug(dto.title);
       const event = await this.prisma.event.create({
         data: {
