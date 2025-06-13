@@ -64,26 +64,26 @@ export class EventsService {
       if (!event) {
         throw new NotFoundException('Event not found');
       }
-      let imageId: string = null;
 
       if (file) {
         const newImage = await this.googleDriveService.updateFileContent(
           event.imageId,
           file,
         );
-        imageId = newImage.id;
+        dto.imageId = newImage.id;
       }
 
       // TODO::  save for later src={`https://drive.google.com/uc?export=view&id=${image.id}`}
-      const slug: string = dto.title && createSlug(dto.title);
+      if (dto.title) {
+        const slug: string = dto.title && createSlug(dto.title);
+        dto.slug = slug;
+      }
 
       const updatedEvent = await this.prisma.event.update({
         where: {
           id,
         },
         data: {
-          slug,
-          imageId,
           ...dto,
         },
       });
@@ -100,7 +100,16 @@ export class EventsService {
   async getEvents(dto: QueryDto): Promise<PaginatedDataResponseDto<Event[]>> {
     try {
       const offset = (dto.page - 1) * dto.pageSize;
+      if (dto.search && dto.searchFields) {
+        const searchBodies = dto.searchFields.map((field) => ({
+          [field]: dto.search,
+        }));
+        dto.searchQueries = searchBodies;
+      }
       const events = await this.prisma.event.findMany({
+        where: {
+          OR: dto.searchQueries,
+        },
         take: dto.pageSize,
         skip: offset,
         orderBy: {

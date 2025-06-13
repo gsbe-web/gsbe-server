@@ -50,8 +50,17 @@ export class NewsService {
 
   async retrieveAllNews(dto: QueryDto) {
     const offset = (dto.page - 1) * dto.pageSize;
+    if (dto.search && dto.searchFields) {
+      const searchBodies = dto.searchFields.map((field) => ({
+        [field]: dto.search,
+      }));
+      dto.searchQueries = searchBodies;
+    }
 
     const news = await this.prisma.news.findMany({
+      where: {
+        OR: dto.searchQueries,
+      },
       take: dto.pageSize,
       skip: offset,
       orderBy: {
@@ -92,29 +101,29 @@ export class NewsService {
 
   async editNews(id: string, dto: UpdateNewsDto, file: Express.Multer.File) {
     try {
-      let postImageId: string = null;
-      if (file) {
-        const news = await this.prisma.news.findUnique({
-          where: { id },
-        });
+      const news = await this.prisma.news.findUnique({
+        where: { id },
+      });
 
+      if (file) {
         const postImage = await this.googleDriveService.updateFileContent(
           news.postImageId,
           file,
         );
 
-        postImageId = postImage.id;
+        dto.postImageId = postImage.id;
       }
 
-      const slug: string = dto.title && createSlug(dto.title);
+      if (dto.title) {
+        const slug: string = dto.title && createSlug(dto.title);
+        dto.slug = slug;
+      }
 
       const updatedNews = await this.prisma.news.update({
         where: {
           id,
         },
         data: {
-          slug,
-          postImageId,
           ...dto,
         },
       });
