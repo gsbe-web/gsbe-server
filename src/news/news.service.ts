@@ -52,12 +52,15 @@ export class NewsService {
     const offset = (dto.page - 1) * dto.pageSize;
     if (dto.search && dto.searchFields) {
       const searchBodies = dto.searchFields.map((field) => ({
-        [field]: dto.search,
+        [field]: {
+          contains: dto.search,
+          mode: 'insensitive',
+        },
       }));
       dto.searchQueries = searchBodies;
     }
 
-    const news = await this.prisma.news.findMany({
+    const findOptions: object = {
       where: {
         OR: dto.searchQueries,
       },
@@ -66,9 +69,11 @@ export class NewsService {
       orderBy: {
         dateTimePosted: 'desc',
       },
-    });
+    };
 
-    const numberOfNews = await this.prisma.news.count();
+    const news = await this.prisma.news.findMany({ ...findOptions });
+
+    const numberOfNews = await this.prisma.news.count({ ...findOptions });
 
     return new PaginatedDataResponseDto<News[]>(
       news,

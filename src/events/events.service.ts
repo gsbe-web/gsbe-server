@@ -102,11 +102,14 @@ export class EventsService {
       const offset = (dto.page - 1) * dto.pageSize;
       if (dto.search && dto.searchFields) {
         const searchBodies = dto.searchFields.map((field) => ({
-          [field]: dto.search,
+          [field]: {
+            contains: dto.search,
+            mode: 'insensitive',
+          },
         }));
         dto.searchQueries = searchBodies;
       }
-      const events = await this.prisma.event.findMany({
+      const findOptions: object = {
         where: {
           OR: dto.searchQueries,
         },
@@ -115,8 +118,13 @@ export class EventsService {
         orderBy: {
           createdAt: 'desc',
         },
+      };
+      const events = await this.prisma.event.findMany({
+        ...findOptions,
       });
-      const eventsCount = await this.prisma.event.count();
+      const eventsCount = await this.prisma.event.count({
+        ...findOptions,
+      });
 
       return new PaginatedDataResponseDto<Event[]>(
         events,
