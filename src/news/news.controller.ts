@@ -11,7 +11,9 @@ import {
   UploadedFile,
   UseInterceptors,
   Query,
+  Logger,
 } from '@nestjs/common';
+import { throwError } from '../utils/responses/error.responses';
 import { NewsService } from './news.service';
 import {
   ApiBody,
@@ -43,6 +45,7 @@ import { GetLikesDto, GetNewsDto } from './dto';
 @ApiTags('News Controller')
 @Controller('news')
 export class NewsController {
+  private logger = new Logger(NewsController.name);
   constructor(private readonly newsService: NewsService) {}
 
   @Post()
@@ -62,12 +65,16 @@ export class NewsController {
     @UploadedFile() file: Express.Multer.File,
     @Body() dto: CreateNewsDto,
   ) {
-    const response = await this.newsService.createNews(dto, file);
-    return new ApiSuccessResponseDto<News>(
-      response,
-      HttpStatus.CREATED,
-      'news created successfully',
-    );
+    try {
+      const response = await this.newsService.createNews(dto, file);
+      return new ApiSuccessResponseDto<News>(
+        response,
+        HttpStatus.CREATED,
+        'news created successfully',
+      );
+    } catch (error) {
+      throwError(this.logger, error);
+    }
   }
 
   @Patch(':id')
@@ -88,12 +95,16 @@ export class NewsController {
     @Param() params: GetParam,
     @Body() dto: UpdateNewsDto,
   ) {
-    const response = await this.newsService.editNews(params.id, dto, file);
-    return new ApiSuccessResponseDto<News>(
-      response,
-      HttpStatus.OK,
-      'news updated successfully',
-    );
+    try {
+      const response = await this.newsService.editNews(params.id, dto, file);
+      return new ApiSuccessResponseDto<News>(
+        response,
+        HttpStatus.OK,
+        'news updated successfully',
+      );
+    } catch (error) {
+      throwError(this.logger, error);
+    }
   }
 
   @Get()
@@ -102,12 +113,16 @@ export class NewsController {
     description: 'News retrieved successfully',
   })
   async getAll(@Query() dto: QueryDto) {
-    const response = await this.newsService.retrieveAllNews(dto);
-    return new ApiSuccessResponseDto<PaginatedDataResponseDto<News[]>>(
-      response,
-      HttpStatus.OK,
-      'all news retrieved successfully',
-    );
+    try {
+      const response = await this.newsService.retrieveAllNews(dto);
+      return new ApiSuccessResponseDto<PaginatedDataResponseDto<News[]>>(
+        response,
+        HttpStatus.OK,
+        'all news retrieved successfully',
+      );
+    } catch (error) {
+      throwError(this.logger, error);
+    }
   }
 
   @Get(':id')
@@ -116,12 +131,16 @@ export class NewsController {
     description: 'News item successfully retrieved',
   })
   async getNewsById(@Param('id') id: string) {
-    const response = await this.newsService.newsById(id);
-    return new ApiSuccessResponseDto<News>(
-      response,
-      HttpStatus.OK,
-      `News item of ${id} has been retrieved`,
-    );
+    try {
+      const response = await this.newsService.newsById(id);
+      return new ApiSuccessResponseDto<News>(
+        response,
+        HttpStatus.OK,
+        `News item of ${id} has been retrieved`,
+      );
+    } catch (error) {
+      throwError(this.logger, error);
+    }
   }
 
   @Delete(':id')
@@ -130,11 +149,15 @@ export class NewsController {
   })
   @HttpCode(HttpStatus.OK)
   async deleteNews(@Param() params: GetParam) {
-    const _response = await this.newsService.deleteNews(params.id);
-    return new ApiSuccessResponseNull(
-      HttpStatus.OK,
-      'news deleted successfully',
-    );
+    try {
+      const _response = await this.newsService.deleteNews(params.id);
+      return new ApiSuccessResponseNull(
+        HttpStatus.OK,
+        'news deleted successfully',
+      );
+    } catch (error) {
+      throwError(this.logger, error);
+    }
   }
 
   @Get('/slug/:slug')
@@ -151,12 +174,16 @@ export class NewsController {
     description: 'News not found',
   })
   async getNewsBySlug(@Param('slug') slug: string) {
-    const response = await this.newsService.newsBySlug(slug);
-    return new ApiSuccessResponseDto<News>(
-      response,
-      HttpStatus.OK,
-      `News item with slug ${slug} has been retrieved`,
-    );
+    try {
+      const response = await this.newsService.newsBySlug(slug);
+      return new ApiSuccessResponseDto<News>(
+        response,
+        HttpStatus.OK,
+        `News item with slug ${slug} has been retrieved`,
+      );
+    } catch (error) {
+      throwError(this.logger, error);
+    }
   }
 
   @Patch(':slug/likes')
@@ -168,12 +195,16 @@ export class NewsController {
     @Param('slug') slug: string,
     @Body() dto: UpdateLikesDto,
   ) {
-    const response = await this.newsService.updateLikes(slug, dto.likes);
-    return new ApiSuccessResponseDto<News>(
-      response,
-      HttpStatus.OK,
-      'news likes updated successfully',
-    );
+    try {
+      const response = await this.newsService.updateLikes(slug, dto.likes);
+      return new ApiSuccessResponseDto<News>(
+        response,
+        HttpStatus.OK,
+        'news likes updated successfully',
+      );
+    } catch (error) {
+      throwError(this.logger, error);
+    }
   }
   @Get(':slug/likes')
   @ApiSuccessResponse({
@@ -181,11 +212,15 @@ export class NewsController {
     description: 'News item successfully retrieved',
   })
   async getLikeCount(@Param('slug') slug: string) {
-    const likes = await this.newsService.getLikeCount(slug);
-    return new ApiSuccessResponseDto(
-      { likes },
-      HttpStatus.OK,
-      `Number of likes for news item with slug ${slug} has been retrieved`,
-    );
+    try {
+      const likes = await this.newsService.getLikeCount(slug);
+      return new ApiSuccessResponseDto(
+        { likes },
+        HttpStatus.OK,
+        `Number of likes for news item with slug ${slug} has been retrieved`,
+      );
+    } catch (error) {
+      throwError(this.logger, error);
+    }
   }
 }
