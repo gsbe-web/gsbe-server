@@ -130,8 +130,9 @@ export class NewsController {
     type: GetNewsDto,
     description: 'News item successfully retrieved',
   })
-  async getNewsById(@Param('id') id: string) {
+  async getNewsById(@Param() params: GetParam) {
     try {
+      const { id } = params;
       const response = await this.newsService.newsById(id);
       return new ApiSuccessResponseDto<News>(
         response,

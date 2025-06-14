@@ -65,7 +65,7 @@ export class NewsService {
   }
 
   async newsById(id: string): Promise<News> {
-    const news = this.prisma.news.findUnique({
+    const news = await this.prisma.news.findUnique({
       where: {
         id: id,
       },
@@ -124,7 +124,7 @@ export class NewsService {
   }
 
   async newsBySlug(slug: string): Promise<News> {
-    const news = this.prisma.news.findUnique({
+    const news = await this.prisma.news.findUnique({
       where: {
         slug: slug,
       },

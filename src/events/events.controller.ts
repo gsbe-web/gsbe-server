@@ -11,7 +11,9 @@ import {
   Get,
   Delete,
   Query,
+  Logger,
 } from '@nestjs/common';
+import { throwError } from '../utils/responses/error.responses';
 import { EventsService } from './events.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
@@ -34,6 +36,7 @@ import { QueryDto } from '../news/dto/pagination-query.dto';
 @ApiTags('Events Controller')
 @Controller('events')
 export class EventsController {
+  private logger = new Logger(EventsController.name);
   constructor(private readonly eventsService: EventsService) {}
 
   @Post()
@@ -53,12 +56,16 @@ export class EventsController {
     file: Express.Multer.File,
     @Body() dto: CreateEventDto,
   ) {
-    const response = await this.eventsService.addEvent(dto, file);
-    return new ApiSuccessResponseDto<Event>(
-      response,
-      HttpStatus.CREATED,
-      'Event created successfully',
-    );
+    try {
+      const response = await this.eventsService.addEvent(dto, file);
+      return new ApiSuccessResponseDto<Event>(
+        response,
+        HttpStatus.CREATED,
+        'Event created successfully',
+      );
+    } catch (error) {
+      throwError(this.logger, error);
+    }
   }
 
   //TODO:: Include validators to make sure only images are sent
@@ -81,12 +88,16 @@ export class EventsController {
     file: Express.Multer.File,
     @Body() dto: UpdateEventDto,
   ) {
-    const response = await this.eventsService.editEvent(params.id, dto, file);
-    return new ApiSuccessResponseDto<Event>(
-      response,
-      HttpStatus.OK,
-      'Event updated successfully',
-    );
+    try {
+      const response = await this.eventsService.editEvent(params.id, dto, file);
+      return new ApiSuccessResponseDto<Event>(
+        response,
+        HttpStatus.OK,
+        'Event updated successfully',
+      );
+    } catch (error) {
+      throwError(this.logger, error);
+    }
   }
 
   @Get()
@@ -95,12 +106,16 @@ export class EventsController {
     description: 'Events retrieved succesfully',
   })
   async getEvents(@Query() dto: QueryDto) {
-    const response = await this.eventsService.getEvents(dto);
-    return new ApiSuccessResponseDto<PaginatedDataResponseDto<Event[]>>(
-      response,
-      HttpStatus.OK,
-      'All Events retrieved successfully',
-    );
+    try {
+      const response = await this.eventsService.getEvents(dto);
+      return new ApiSuccessResponseDto<PaginatedDataResponseDto<Event[]>>(
+        response,
+        HttpStatus.OK,
+        'All Events retrieved successfully',
+      );
+    } catch (error) {
+      throwError(this.logger, error);
+    }
   }
 
   @Get(':id')
@@ -108,13 +123,18 @@ export class EventsController {
     type: GetEventsDto,
     description: 'Event successfully retrieved',
   })
-  async getEventById(@Param('id') id: string) {
-    const response = await this.eventsService.getEventById(id);
-    return new ApiSuccessResponseDto<Event>(
-      response,
-      HttpStatus.OK,
-      `Event with id: ${id} has been retrieved`,
-    );
+  async getEventById(@Param() param: GetParam) {
+    try {
+      const { id } = param;
+      const response = await this.eventsService.getEventById(id);
+      return new ApiSuccessResponseDto<Event>(
+        response,
+        HttpStatus.OK,
+        `Event with id: ${id} has been retrieved`,
+      );
+    } catch (error) {
+      throwError(this.logger, error);
+    }
   }
 
   @Get('/slug/:slug')
@@ -123,12 +143,16 @@ export class EventsController {
     description: 'Event successfully retrieved',
   })
   async getEventBySlug(@Param('slug') slug: string) {
-    const response = await this.eventsService.getEventBySlug(slug);
-    return new ApiSuccessResponseDto<Event>(
-      response,
-      HttpStatus.OK,
-      `Event with id: ${slug} has been retrieved`,
-    );
+    try {
+      const response = await this.eventsService.getEventBySlug(slug);
+      return new ApiSuccessResponseDto<Event>(
+        response,
+        HttpStatus.OK,
+        `Event with id: ${slug} has been retrieved`,
+      );
+    } catch (error) {
+      throwError(this.logger, error);
+    }
   }
 
   @Delete(':id')
@@ -136,10 +160,14 @@ export class EventsController {
     description: 'Event deleted successfully',
   })
   async removeEvent(@Param() params: GetParam) {
-    const _response = await this.eventsService.deleteEventById(params.id);
-    return new ApiSuccessResponseNull(
-      HttpStatus.OK,
-      'event deleted successfully',
-    );
+    try {
+      const _response = await this.eventsService.deleteEventById(params.id);
+      return new ApiSuccessResponseNull(
+        HttpStatus.OK,
+        'event deleted successfully',
+      );
+    } catch (error) {
+      throwError(this.logger, error);
+    }
   }
 }
