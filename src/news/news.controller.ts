@@ -70,7 +70,7 @@ export class NewsController {
       return new ApiSuccessResponseDto<News>(
         response,
         HttpStatus.CREATED,
-        'news created successfully',
+        'News created successfully',
       );
     } catch (error) {
       throwError(this.logger, error);
@@ -100,7 +100,7 @@ export class NewsController {
       return new ApiSuccessResponseDto<News>(
         response,
         HttpStatus.OK,
-        'news updated successfully',
+        'News updated successfully',
       );
     } catch (error) {
       throwError(this.logger, error);
@@ -118,7 +118,7 @@ export class NewsController {
       return new ApiSuccessResponseDto<PaginatedDataResponseDto<News[]>>(
         response,
         HttpStatus.OK,
-        'all news retrieved successfully',
+        'All news retrieved successfully',
       );
     } catch (error) {
       throwError(this.logger, error);
@@ -137,7 +137,7 @@ export class NewsController {
       return new ApiSuccessResponseDto<News>(
         response,
         HttpStatus.OK,
-        `News item of ${id} has been retrieved`,
+        `News item has been retrieved`,
       );
     } catch (error) {
       throwError(this.logger, error);
@@ -154,7 +154,7 @@ export class NewsController {
       const _response = await this.newsService.deleteNews(params.id);
       return new ApiSuccessResponseNull(
         HttpStatus.OK,
-        'news deleted successfully',
+        'News deleted successfully',
       );
     } catch (error) {
       throwError(this.logger, error);
@@ -180,7 +180,7 @@ export class NewsController {
       return new ApiSuccessResponseDto<News>(
         response,
         HttpStatus.OK,
-        `News item with slug ${slug} has been retrieved`,
+        `News item has been retrieved`,
       );
     } catch (error) {
       throwError(this.logger, error);
@@ -201,7 +201,7 @@ export class NewsController {
       return new ApiSuccessResponseDto<News>(
         response,
         HttpStatus.OK,
-        'news likes updated successfully',
+        'News likes updated successfully',
       );
     } catch (error) {
       throwError(this.logger, error);
@@ -218,7 +218,7 @@ export class NewsController {
       return new ApiSuccessResponseDto(
         { likes },
         HttpStatus.OK,
-        `Number of likes for news item with slug ${slug} has been retrieved`,
+        `News likes retrieved successfully`,
       );
     } catch (error) {
       throwError(this.logger, error);
