@@ -68,7 +68,7 @@ export class EventsController {
     }
   }
 
-  //TODO:: Include validators to make sure only images are sent
+  //TODO:: Include validators to make sure only images are sent soon
   @Patch(':id')
   @ApiConsumes('multipart/form-data')
   @UseInterceptors(FileInterceptor('file'))
