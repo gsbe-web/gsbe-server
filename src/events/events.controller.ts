@@ -130,7 +130,7 @@ export class EventsController {
       return new ApiSuccessResponseDto<Event>(
         response,
         HttpStatus.OK,
-        `Event with id: ${id} has been retrieved`,
+        `Event has been retrieved successfully`,
       );
     } catch (error) {
       throwError(this.logger, error);
@@ -148,7 +148,7 @@ export class EventsController {
       return new ApiSuccessResponseDto<Event>(
         response,
         HttpStatus.OK,
-        `Event with id: ${slug} has been retrieved`,
+        `Event has been retrieved successfully`,
       );
     } catch (error) {
       throwError(this.logger, error);
@@ -164,7 +164,7 @@ export class EventsController {
       const _response = await this.eventsService.deleteEventById(params.id);
       return new ApiSuccessResponseNull(
         HttpStatus.OK,
-        'event deleted successfully',
+        'Event deleted successfully',
       );
     } catch (error) {
       throwError(this.logger, error);
