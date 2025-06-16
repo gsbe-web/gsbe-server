@@ -94,7 +94,12 @@ export class EventsService {
       ...findOptions,
     });
     const eventsCount = await this.prisma.event.count({
-      ...findOptions,
+      where: {
+        OR: dto.searchQueries,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
     });
     return new PaginatedDataResponseDto<Event[]>(
       events,

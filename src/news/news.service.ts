@@ -54,7 +54,14 @@ export class NewsService {
 
     const news = await this.prisma.news.findMany({ ...findOptions });
 
-    const numberOfNews = await this.prisma.news.count({ ...findOptions });
+    const numberOfNews = await this.prisma.news.count({
+      where: {
+        OR: dto.searchQueries,
+      },
+      orderBy: {
+        dateTimePosted: 'desc',
+      },
+    });
 
     return new PaginatedDataResponseDto<News[]>(
       news,
