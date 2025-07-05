@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { EventsModule } from './events.module';
-import { INestApplication } from '@nestjs/common';
+import { HttpStatus, INestApplication } from '@nestjs/common';
 import { request, spec } from 'pactum';
 import { faker } from '@faker-js/faker';
 import { createReadStream } from 'node:fs';
@@ -43,6 +43,7 @@ describe('EventsController (E2E)', () => {
           type: 'image/jpeg',
           filename: 'sample.jpg',
         },
-      ]);
+      ])
+      .expectStatus(HttpStatus.CREATED);
   });
 });
