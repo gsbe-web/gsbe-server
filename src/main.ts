@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { useContainer } from 'class-validator';
-import { ValidationPipe } from '@nestjs/common';
+import { RequestMethod, ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
@@ -19,7 +19,9 @@ async function bootstrap() {
     }),
   );
 
-  app.setGlobalPrefix('/api/v1');
+  app.setGlobalPrefix('/api/v1', {
+    exclude: [{ path: '', method: RequestMethod.GET }],
+  });
   const swaggerConfig = new DocumentBuilder()
     .setTitle('GSBE Backend Service')
     .setDescription(
