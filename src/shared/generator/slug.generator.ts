@@ -1,5 +1,3 @@
-import { nanoid } from 'nanoid';
-
 export function createSlug(title: string) {
   const partialSlug = title
     .toLowerCase()
@@ -7,6 +5,6 @@ export function createSlug(title: string) {
     .replace(/[^\w-]+/g, '')
     .replace(/--+/g, '-')
     .replace(/^-|-$/g, '');
-  const randomString = nanoid(4);
+  const randomString = crypto.randomUUID().slice(0, 5);
   return `${partialSlug}-${randomString}`;
 }
