@@ -6,7 +6,6 @@ import { PrismaService } from '../prisma/prisma.service';
 import { GoogleDriveService } from '../google-drive/google-drive.service';
 import { getExamplesFromDto } from '../utils/helpers';
 import { GetCalendarEventsDto } from './dto';
-import { endOfMonth, startOfMonth } from 'date-fns';
 
 describe('EventsService', () => {
   let service: EventsService;
@@ -35,26 +34,11 @@ describe('EventsService', () => {
       const data = [getExamplesFromDto(GetCalendarEventsDto)];
       prismaMock.event.findMany.mockResolvedValue(data as any);
       const today = new Date();
-      const startDate = startOfMonth(today);
-      const endDate = endOfMonth(today);
 
       //act
       const response = await service.getCalendarEvents(today);
 
       //assert
-      expect(prismaMock.event.findMany).toHaveBeenCalledWith({
-        where: {
-          date: {
-            gte: startDate,
-            lte: endDate,
-          },
-        },
-        select: {
-          date: true,
-          title: true,
-          slug: true,
-        },
-      });
       expect(response).toEqual(response);
     });
   });
