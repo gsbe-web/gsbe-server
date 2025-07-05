@@ -29,7 +29,13 @@ import {
   ApiSuccessResponse,
 } from '../shared/decorators/success-response.decorator';
 import { GetParam } from '../shared/dto/get-param.dto';
-import { CreateEventDto, GetEventsDto, UpdateEventDto } from './dto';
+import {
+  CreateEventDto,
+  GetCalendarEventsDto,
+  GetCalendarEventsQueryDto,
+  GetEventsDto,
+  UpdateEventDto,
+} from './dto';
 import { ApiOkResponsePaginated } from '../shared/decorators/paginated-response.decorator';
 import { QueryDto } from '../news/dto/pagination-query.dto';
 
@@ -149,6 +155,25 @@ export class EventsController {
         response,
         HttpStatus.OK,
         `Event has been retrieved successfully`,
+      );
+    } catch (error) {
+      throwError(this.logger, error);
+    }
+  }
+
+  @Get('calendar')
+  @ApiSuccessResponse({
+    type: GetCalendarEventsDto,
+    isArray: true,
+    description: 'Calendar Events retrieved succesfully',
+  })
+  async getCalendarEvents(@Query() query: GetCalendarEventsQueryDto) {
+    try {
+      const response = await this.eventsService.getCalendarEvents(query.date);
+      return new ApiSuccessResponseDto(
+        response,
+        HttpStatus.OK,
+        'Calendar Events retrieved successfully',
       );
     } catch (error) {
       throwError(this.logger, error);

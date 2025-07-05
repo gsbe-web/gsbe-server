@@ -7,6 +7,7 @@ import { QueryDto } from '../news/dto/pagination-query.dto';
 import { PaginatedDataResponseDto } from '../utils/responses/success.responses';
 import { GoogleDriveService } from '../google-drive/google-drive.service';
 import { CreateEventDto } from './dto/create-event.dto';
+import { GetCalendarEventsDto } from './dto';
 
 @Injectable()
 export class EventsService {
@@ -131,6 +132,11 @@ export class EventsService {
       throw new NotFoundException('Event not found');
     }
     return event;
+  }
+
+  // remove _ from date then proceed with implementation
+  async getCalendarEvents(_date: Date): Promise<GetCalendarEventsDto[]> {
+    return;
   }
 
   async deleteEventById(id: string) {

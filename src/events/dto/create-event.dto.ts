@@ -56,5 +56,3 @@ export class CreateEventDto {
   @ApiProperty({ type: 'string', format: 'binary' })
   file: Express.Multer.File;
 }
-
-export class GetEventsDto extends CreateEventDto {}
