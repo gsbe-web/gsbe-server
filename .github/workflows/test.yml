@@ -1,0 +1,35 @@
+name: Test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  Test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository code
+        uses: actions/checkout@v4
+
+      - name: Install yarn
+        uses: borales/actions-yarn@v4
+        with:
+          cmd: install
+
+      - name: Initialize Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.x'
+          cache: yarn
+
+      - name: Install Dependencies
+        run: yarn install
+
+      - name: Run test
+        run: yarn test
