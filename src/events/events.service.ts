@@ -8,6 +8,7 @@ import { PaginatedDataResponseDto } from '../utils/responses/success.responses';
 import { GoogleDriveService } from '../google-drive/google-drive.service';
 import { CreateEventDto } from './dto/create-event.dto';
 import { GetCalendarEventsDto } from './dto';
+import { endOfMonth, startOfMonth } from 'date-fns';
 
 @Injectable()
 export class EventsService {
@@ -135,8 +136,23 @@ export class EventsService {
   }
 
   // remove _ from date then proceed with implementation
-  async getCalendarEvents(_date: Date): Promise<GetCalendarEventsDto[]> {
-    return;
+  async getCalendarEvents(date: Date): Promise<GetCalendarEventsDto[]> {
+    const startDate = startOfMonth(date);
+    const endDate = endOfMonth(date);
+    const calendarEvents = await this.prisma.event.findMany({
+      where: {
+        date: {
+          gte: startDate,
+          lte: endDate,
+        },
+      },
+      select: {
+        date: true,
+        title: true,
+        slug: true,
+      },
+    });
+    return calendarEvents;
   }
 
   async deleteEventById(id: string) {
