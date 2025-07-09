@@ -57,6 +57,12 @@ export class GetNewsDto {
   postImageId: string;
 
   @ApiResponseProperty({
+    example:
+      'https://res.cloudinary.com/demo/image/upload/v1618849234/sample.jpg',
+  })
+  postImageUrl: string;
+
+  @ApiResponseProperty({
     example: 150,
   })
   views: number;

@@ -1,11 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { Event } from '@prisma/client';
 import { UpdateEventDto } from './dto/update-event.dto';
 import { createSlug } from '../shared/generator';
 import { QueryDto } from '../news/dto/pagination-query.dto';
 import { PaginatedDataResponseDto } from '../utils/responses/success.responses';
-import { GoogleDriveService } from '../google-drive/google-drive.service';
 import { CreateEventDto } from './dto/create-event.dto';
 import { GetCalendarEventsDto } from './dto';
 import { endOfMonth, startOfMonth } from 'date-fns';
@@ -13,7 +13,7 @@ import { endOfMonth, startOfMonth } from 'date-fns';
 @Injectable()
 export class EventsService {
   constructor(
-    private readonly googleDriveService: GoogleDriveService,
+    private readonly cloudinaryService: CloudinaryService,
     private prisma: PrismaService,
   ) {}
 
@@ -21,14 +21,15 @@ export class EventsService {
     dto: CreateEventDto,
     file: Express.Multer.File,
   ): Promise<Event> {
-    const image = await this.googleDriveService.uploadFile(file);
-    const fileId = image.fileId;
-    // TODO::  save cool for later src={`https://drive.google.com/uc?export=view&id=${image.id}`}
+    const image = await this.cloudinaryService.uploadFile(file);
+    const fileId = image.public_id;
+
     const slug: string = createSlug(dto.title);
     const event = await this.prisma.event.create({
       data: {
         slug,
         imageId: fileId,
+        imageUrl: image.secure_url,
         ...dto,
       },
     });
@@ -49,13 +50,13 @@ export class EventsService {
       throw new NotFoundException('Event not found');
     }
     if (file) {
-      const newImage = await this.googleDriveService.updateFileContent(
-        event.imageId,
+      const newImage = await this.cloudinaryService.updateFileContent(
         file,
+        event.imageId,
       );
-      dto.imageId = newImage.id;
+      dto.imageId = newImage.public_id;
+      dto.imageUrl = newImage.secure_url;
     }
-    // TODO::  save for later src={`https://drive.google.com/uc?export=view&id=${image.id}`}
     if (dto.title) {
       const slug: string = dto.title && createSlug(dto.title);
       dto.slug = slug;
@@ -135,7 +136,6 @@ export class EventsService {
     return event;
   }
 
-  // remove _ from date then proceed with implementation
   async getCalendarEvents(date: Date): Promise<GetCalendarEventsDto[]> {
     const startDate = startOfMonth(date);
     const endDate = endOfMonth(date);
@@ -162,10 +162,10 @@ export class EventsService {
     if (!event) {
       throw new NotFoundException('event not found');
     }
-    const deleteEvent = await this.prisma.event.delete({
+    const _deleteEvent = await this.prisma.event.delete({
       where: { id },
     });
-    await this.googleDriveService.deleteFile(deleteEvent.imageId);
+    await this.cloudinaryService.deleteFile(event.imageId);
     return true;
   }
 }

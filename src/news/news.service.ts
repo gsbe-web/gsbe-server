@@ -5,24 +5,23 @@ import { PaginatedDataResponseDto } from '../utils/responses/success.responses';
 import { QueryDto } from './dto/pagination-query.dto';
 import { CreateNewsDto, UpdateNewsDto } from './dto';
 import { createSlug } from '../shared/generator';
-import { GoogleDriveService } from '../google-drive/google-drive.service';
+import { CloudinaryService } from '../cloudinary/cloudinary.service';
 
 @Injectable()
 export class NewsService {
   constructor(
     private readonly prisma: PrismaService,
-    private googleDriveService: GoogleDriveService,
+    private cloudinaryService: CloudinaryService,
   ) {}
 
   async createNews(dto: CreateNewsDto, file: Express.Multer.File) {
-    const postImageUrl = await this.googleDriveService.uploadFile(file);
-    const fileId = postImageUrl.fileId;
-    // TODO::  save for later src={`https://drive.google.com/uc?export=view&id=${image.id}`}
-    const slug: string = createSlug(dto.title);
+    const postImage = await this.cloudinaryService.uploadFile(file);
+
+    dto.slug = createSlug(dto.title);
+    dto.postImageId = postImage.public_id;
+    dto.profileImageUrl = postImage.secure_url;
     const news = await this.prisma.news.create({
       data: {
-        slug,
-        postImageId: fileId,
         ...dto,
       },
     });
@@ -88,12 +87,17 @@ export class NewsService {
       where: { id },
     });
 
+    if (!news) {
+      throw new NotFoundException('News not found');
+    }
+
     if (file) {
-      const postImage = await this.googleDriveService.updateFileContent(
-        news.postImageId,
+      const postImage = await this.cloudinaryService.updateFileContent(
         file,
+        news.postImageId,
       );
-      dto.postImageId = postImage.id;
+      dto.postImageId = postImage.public_id;
+      dto.postImageUrl = postImage.secure_url;
     }
 
     if (dto.title) {
@@ -118,14 +122,14 @@ export class NewsService {
     });
 
     if (!news) {
-      throw new NotFoundException('news not found');
+      throw new NotFoundException('News not found');
     }
 
     const deletedNews = await this.prisma.news.delete({
       where: { id },
     });
 
-    await this.googleDriveService.deleteFile(deletedNews.postImageId);
+    await this.cloudinaryService.deleteFile(deletedNews.postImageId);
 
     return true;
   }
@@ -137,7 +141,7 @@ export class NewsService {
       },
     });
     if (!news) {
-      throw new NotFoundException(`News item not found`);
+      throw new NotFoundException(`News not found`);
     }
     return news;
   }
@@ -164,7 +168,7 @@ export class NewsService {
       },
     });
     if (!news) {
-      throw new NotFoundException('News item not found');
+      throw new NotFoundException('News not found');
     }
     return news.likes;
   }

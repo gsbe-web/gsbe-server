@@ -16,6 +16,7 @@ datasource db {
 model Event {
   id          String    @id @default(auto()) @map("_id") @db.ObjectId
   imageId     String    @unique
+  imageUrl    String?   @unique
   title       String
   date        DateTime
   location    String
@@ -31,6 +32,7 @@ model News {
   dateTimePosted  DateTime
   profileImageUrl String
   postImageId     String   @unique
+  postImageUrl    String?  @unique
   title           String
   content         String
   views           Int      @default(0)

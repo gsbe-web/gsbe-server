@@ -22,6 +22,12 @@ export class CreateEventDto {
   })
   imageId: string;
 
+  @ApiResponseProperty({
+    example:
+      'https://res.cloudinary.com/demo/image/upload/v1618849234/sample.jpg',
+  })
+  imageUrl: string;
+
   @ApiProperty({
     example: '1st African Regional Biomedical Engineering Conference Kenya',
     description: 'The title of the event',
