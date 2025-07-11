@@ -15,6 +15,11 @@ export class GetCalendarEventsQueryDto {
 
 export class GetCalendarEventsDto {
   @ApiResponseProperty({
+    example: '66ea4674fc8f7bc2668164c4',
+  })
+  id: string;
+
+  @ApiResponseProperty({
     example: addMinutes(new Date(), 24),
   })
   date: Date;

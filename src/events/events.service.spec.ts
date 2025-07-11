@@ -3,20 +3,20 @@ import { EventsService } from './events.service';
 import { mockDeep } from 'jest-mock-extended';
 import { PrismaClient } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
-import { GoogleDriveService } from '../google-drive/google-drive.service';
 import { getExamplesFromDto } from '../utils/helpers';
 import { GetCalendarEventsDto } from './dto';
+import { CloudinaryService } from '../cloudinary/cloudinary.service';
 
 describe('EventsService', () => {
   let service: EventsService;
   const prismaMock = mockDeep<PrismaClient>();
-  const googleDriveServiceMock = mockDeep<GoogleDriveService>();
+  const cloudinaryServiceMock = mockDeep<CloudinaryService>();
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         EventsService,
-        { provide: GoogleDriveService, useValue: googleDriveServiceMock },
+        { provide: CloudinaryService, useValue: cloudinaryServiceMock },
         { provide: PrismaService, useValue: prismaMock },
       ],
     }).compile();

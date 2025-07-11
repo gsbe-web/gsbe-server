@@ -147,6 +147,7 @@ export class EventsService {
         },
       },
       select: {
+        id: true,
         date: true,
         title: true,
         slug: true,
