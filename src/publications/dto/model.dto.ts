@@ -1,8 +1,8 @@
-import { ApiProperty, ApiResponseProperty, PickType } from '@nestjs/swagger';
+import { ApiProperty, ApiResponseProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
 import { IsDate, IsNotEmpty, IsString, MinDate } from 'class-validator';
 
-export class GetNewsDto {
+export class PublicationsDto {
   @ApiResponseProperty({
     example: '66f4563bbf5de67f47ece4f5',
   })
@@ -15,7 +15,7 @@ export class GetNewsDto {
 
   @ApiProperty({
     example: new Date(new Date().getTime() + 24 * 60000),
-    description: 'News date',
+    description: 'Publications date',
   })
   @IsNotEmpty()
   @Transform(({ value }) => value && new Date(value))
@@ -25,14 +25,14 @@ export class GetNewsDto {
 
   @ApiProperty({
     example: 'Healthcare Innovation in Africa',
-    description: 'News title',
+    description: 'Publications title',
   })
   @IsNotEmpty()
   title: string;
 
   @ApiProperty({
     example: `Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.`,
-    description: 'News body',
+    description: 'Publications body',
   })
   @IsNotEmpty()
   content: string;
@@ -73,7 +73,7 @@ export class GetNewsDto {
   comments: number;
 
   @ApiProperty({
-    description: 'The updated like count for the news post',
+    description: 'The updated like count for the Publications post',
     example: 30,
   })
   likes: number;
@@ -81,5 +81,3 @@ export class GetNewsDto {
   @ApiProperty({ type: 'string', format: 'binary' })
   file: Express.Multer.File;
 }
-
-export class GetLikesDto extends PickType(GetNewsDto, ['likes']) {}

@@ -1,7 +1,8 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { drive_v3, google } from 'googleapis';
-import { GoogleDriveConfigOptions, UploadedFile } from './types';
 import { Readable } from 'stream';
+
+import { GoogleDriveConfigOptions, UploadedFile } from './types';
 
 /**
  * Service for interacting with Google Drive using the Google Drive API.

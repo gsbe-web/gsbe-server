@@ -1,14 +1,15 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
-import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { Event } from '@prisma/client';
-import { UpdateEventDto } from './dto/update-event.dto';
-import { createSlug } from '../shared/generator';
-import { QueryDto } from '../news/dto/pagination-query.dto';
-import { PaginatedDataResponseDto } from '../utils/responses/success.responses';
-import { CreateEventDto } from './dto/create-event.dto';
-import { GetCalendarEventsDto } from './dto';
 import { endOfMonth, startOfMonth } from 'date-fns';
+
+import { CloudinaryService } from '../cloudinary/cloudinary.service';
+import { PrismaService } from '../prisma/prisma.service';
+import { QueryDto } from '../shared/dto/pagination.dto';
+import { createSlug } from '../shared/generator';
+import { PaginatedDataResponseDto } from '../utils/responses/success.responses';
+import { GetCalendarEventsDto } from './dto';
+import { CreateEventDto } from './dto/create-event.dto';
+import { UpdateEventDto } from './dto/update-event.dto';
 
 @Injectable()
 export class EventsService {

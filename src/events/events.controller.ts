@@ -1,34 +1,36 @@
 import {
   Body,
   Controller,
+  Delete,
+  Get,
   HttpCode,
   HttpStatus,
+  Logger,
   Param,
   Patch,
   Post,
+  Query,
   UploadedFile,
   UseInterceptors,
-  Get,
-  Delete,
-  Query,
-  Logger,
 } from '@nestjs/common';
-import { throwError } from '../utils/responses/error.responses';
-import { EventsService } from './events.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
-import {
-  ApiSuccessResponseDto,
-  ApiSuccessResponseNull,
-  PaginatedDataResponseDto,
-} from '../utils/responses/success.responses';
 import { Event } from '@prisma/client';
+
+import { ApiOkResponsePaginated } from '../shared/decorators/paginated-response.decorator';
 import {
   ApiCreatedSuccessResponse,
   ApiDeletedSucessResponse,
   ApiSuccessResponse,
 } from '../shared/decorators/success-response.decorator';
 import { GetParam } from '../shared/dto/get-param.dto';
+import { QueryDto } from '../shared/dto/pagination.dto';
+import { throwError } from '../utils/responses/error.responses';
+import {
+  ApiSuccessResponseDto,
+  ApiSuccessResponseNull,
+  PaginatedDataResponseDto,
+} from '../utils/responses/success.responses';
 import {
   CreateEventDto,
   GetCalendarEventsDto,
@@ -36,8 +38,7 @@ import {
   GetEventsDto,
   UpdateEventDto,
 } from './dto';
-import { ApiOkResponsePaginated } from '../shared/decorators/paginated-response.decorator';
-import { QueryDto } from '../news/dto/pagination-query.dto';
+import { EventsService } from './events.service';
 
 @ApiTags('Events Controller')
 @Controller('events')

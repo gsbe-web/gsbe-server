@@ -1,14 +1,15 @@
 import { Module } from '@nestjs/common';
-import { NewsController } from './news.controller';
-import { NewsService } from './news.service';
+
 import { PrismaModule } from '../prisma/prisma.module';
+import { PublicationsController } from './publications.controller';
+import { PublicationsService } from './publications.service';
 
 @Module({
   imports: [PrismaModule],
-  controllers: [NewsController],
-  providers: [NewsService],
+  controllers: [PublicationsController],
+  providers: [PublicationsService],
 })
-export class NewsModule {}
+export class PublicationsModule {}
 
 // GoogleDriveModule.register({
 //   config,

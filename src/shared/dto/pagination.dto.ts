@@ -1,12 +1,12 @@
-import {
-  IsOptional,
-  IsPositive,
-  IsInt,
-  IsString,
-  IsArray,
-} from 'class-validator';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
+import {
+  IsArray,
+  IsInt,
+  IsOptional,
+  IsPositive,
+  IsString,
+} from 'class-validator';
 
 export class QueryDto {
   @ApiPropertyOptional({ description: 'Page number', default: 1, example: 1 })

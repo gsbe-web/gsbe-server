@@ -1,6 +1,7 @@
 import { DynamicModule, Module, Provider } from '@nestjs/common';
-import { GoogleDriveConfigOptions } from './types';
+
 import { GoogleDriveService } from './google-drive.service';
+import { GoogleDriveConfigOptions } from './types';
 
 @Module({})
 export class GoogleDriveModule {
