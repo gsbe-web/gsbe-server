@@ -17,17 +17,16 @@ export class QueryDto {
 
   @ApiPropertyOptional({
     description: 'Number of items per page',
-    default: 5,
-    example: 5,
+    default: 10,
+    example: 10,
   })
   @IsOptional()
   @IsInt()
   @IsPositive()
-  pageSize: number = 5;
+  pageSize: number = 10;
 
   @ApiPropertyOptional({
     description: 'Pass in search keyword',
-    example: 'Search for',
   })
   @IsOptional()
   @IsString()
@@ -35,7 +34,6 @@ export class QueryDto {
 
   @ApiPropertyOptional({
     description: 'The fields to be searched in',
-    example: 'Search for',
   })
   @IsOptional()
   @IsArray()

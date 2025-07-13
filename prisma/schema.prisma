@@ -26,17 +26,36 @@ model Event {
   updatedAt   DateTime? @updatedAt
 }
 
-model Publications {
-  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+model Publication {
+  id              String    @id @default(auto()) @map("_id") @db.ObjectId
   username        String
   dateTimePosted  DateTime
   profileImageUrl String
-  postImageId     String   @unique
-  postImageUrl    String?  @unique
+  postImageId     String    @unique
+  postImageUrl    String?   @unique
   title           String
   content         String
-  views           Int      @default(0)
-  comments        Int      @default(0)
-  likes           Int      @default(0)
-  slug            String   @unique
+  views           Int       @default(0)
+  comments        Int       @default(0)
+  likes           Int       @default(0)
+  slug            String    @unique
+  createdAt       DateTime? @default(now())
+  updatedAt       DateTime? @updatedAt
+}
+
+model Member {
+  id           String    @id @default(auto()) @map("_id") @db.ObjectId
+  slug         String    @unique
+  type         String
+  name         String
+  role         String?
+  description  String?
+  imageId      String?   @unique
+  imageUrl     String?   @unique
+  email        String?   @unique
+  linkedinUrl  String?   @unique
+  twitterUrl   String?   @unique
+  instagramUrl String?   @unique
+  createdAt    DateTime? @default(now())
+  updatedAt    DateTime? @updatedAt
 }

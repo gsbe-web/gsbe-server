@@ -6,6 +6,7 @@ import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { QueryDto } from '../shared/dto/pagination.dto';
 import { createSlug } from '../shared/generator';
+import { generateFilter } from '../utils/helpers';
 import { PaginatedDataResponseDto } from '../utils/responses/success.responses';
 import { GetCalendarEventsDto } from './dto';
 import { CreateEventDto } from './dto/create-event.dto';
@@ -74,35 +75,21 @@ export class EventsService {
   }
 
   async getEvents(dto: QueryDto): Promise<PaginatedDataResponseDto<Event[]>> {
-    const offset = (dto.page - 1) * dto.pageSize;
-    if (dto.search && dto.searchFields) {
-      const searchBodies = dto.searchFields.map((field) => ({
-        [field]: {
-          contains: dto.search,
-          mode: 'insensitive',
-        },
-      }));
-      dto.searchQueries = searchBodies;
-    }
+    const queryFilter = generateFilter(dto);
+
     const findOptions: object = {
       where: {
-        OR: dto.searchQueries,
+        ...queryFilter.searchFilter,
       },
-      take: dto.pageSize,
-      skip: offset,
-      orderBy: {
-        createdAt: 'desc',
-      },
+      ...queryFilter.pageFilter,
     };
     const events = await this.prisma.event.findMany({
       ...findOptions,
     });
+
     const eventsCount = await this.prisma.event.count({
       where: {
-        OR: dto.searchQueries,
-      },
-      orderBy: {
-        createdAt: 'desc',
+        ...queryFilter.searchFilter,
       },
     });
     return new PaginatedDataResponseDto<Event[]>(

@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Publications } from '@prisma/client';
+import { Publication } from '@prisma/client';
 
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { PrismaService } from '../prisma/prisma.service';
@@ -21,7 +21,7 @@ export class PublicationsService {
     dto.slug = createSlug(dto.title);
     dto.postImageId = postImage.public_id;
     dto.profileImageUrl = postImage.secure_url;
-    const publication = await this.prisma.publications.create({
+    const publication = await this.prisma.publication.create({
       data: {
         ...dto,
       },
@@ -52,11 +52,11 @@ export class PublicationsService {
       },
     };
 
-    const publications = await this.prisma.publications.findMany({
+    const publications = await this.prisma.publication.findMany({
       ...findOptions,
     });
 
-    const numberOfPublications = await this.prisma.publications.count({
+    const numberOfPublications = await this.prisma.publication.count({
       where: {
         OR: dto.searchQueries,
       },
@@ -65,7 +65,7 @@ export class PublicationsService {
       },
     });
 
-    return new PaginatedDataResponseDto<Publications[]>(
+    return new PaginatedDataResponseDto<Publication[]>(
       publications,
       dto.page,
       dto.pageSize,
@@ -73,8 +73,8 @@ export class PublicationsService {
     );
   }
 
-  async retrieveById(id: string): Promise<Publications> {
-    const publication = await this.prisma.publications.findUnique({
+  async retrieveById(id: string): Promise<Publication> {
+    const publication = await this.prisma.publication.findUnique({
       where: {
         id: id,
       },
@@ -85,8 +85,8 @@ export class PublicationsService {
     return publication;
   }
 
-  async retrieveBySlug(slug: string): Promise<Publications> {
-    const publication = await this.prisma.publications.findUnique({
+  async retrieveBySlug(slug: string): Promise<Publication> {
+    const publication = await this.prisma.publication.findUnique({
       where: {
         slug: slug,
       },
@@ -98,7 +98,7 @@ export class PublicationsService {
   }
 
   async updateLikes(slug: string, likeCount: number) {
-    const updatedLike = await this.prisma.publications.update({
+    const updatedLike = await this.prisma.publication.update({
       where: {
         slug: slug,
       },
@@ -110,7 +110,7 @@ export class PublicationsService {
   }
 
   async getLikeCount(slug: string) {
-    const publication = await this.prisma.publications.findUnique({
+    const publication = await this.prisma.publication.findUnique({
       where: {
         slug,
       },
@@ -125,7 +125,7 @@ export class PublicationsService {
   }
 
   async edit(id: string, dto: UpdatePublicationDto, file: Express.Multer.File) {
-    const publication = await this.prisma.publications.findUnique({
+    const publication = await this.prisma.publication.findUnique({
       where: { id },
     });
 
@@ -147,7 +147,7 @@ export class PublicationsService {
       dto.slug = slug;
     }
 
-    const updatedPublication = await this.prisma.publications.update({
+    const updatedPublication = await this.prisma.publication.update({
       where: {
         id,
       },
@@ -159,7 +159,7 @@ export class PublicationsService {
   }
 
   async delete(id: string) {
-    const publication = await this.prisma.publications.findFirst({
+    const publication = await this.prisma.publication.findFirst({
       where: { id },
     });
 
@@ -167,7 +167,7 @@ export class PublicationsService {
       throw new NotFoundException('Publication not found');
     }
 
-    const deletedPublication = await this.prisma.publications.delete({
+    const deletedPublication = await this.prisma.publication.delete({
       where: { id },
     });
 
