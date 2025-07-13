@@ -2,13 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Member } from '@prisma/client';
 
 import { PrismaService } from '../prisma/prisma.service';
-import { getExamplesAsObject } from '../utils/helpers';
-import {
-  CreateMemberDto,
-  FindMembersQueryDto,
-  GetMemberDto,
-  UpdateMemberDto,
-} from './dto';
+import { CreateMemberDto, FindMembersQueryDto, UpdateMemberDto } from './dto';
 
 @Injectable()
 export class MembersService {
@@ -28,7 +22,7 @@ export class MembersService {
     // this.prismaService.member.findMany()
     // this.prismaService.member.count()
     //replace with actual results:  {rows: members, count: membersCount}
-    console.log(getExamplesAsObject(GetMemberDto));
+
     return {
       rows: [],
       count: 0,
