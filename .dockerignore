@@ -1,0 +1,13 @@
+.github
+.husky
+.vercel
+.vscode
+dist
+node_modules
+*.log
+*.md
+.git
+.gitignore
+vercel.json
+.env
+.env.production.local
