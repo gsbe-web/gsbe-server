@@ -40,7 +40,7 @@ describe('EventsService', () => {
       const response = await service.getCalendarEvents(today);
 
       //assert
-      expect(response).toEqual(response);
+      expect(response).toEqual(data);
     });
   });
 });
