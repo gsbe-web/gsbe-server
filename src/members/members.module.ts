@@ -1,11 +1,14 @@
 import { Module } from '@nestjs/common';
+import { MongooseModule } from '@nestjs/mongoose';
 
-import { PrismaModule } from '../prisma/prisma.module';
+import { Member, MemberSchema } from './entities';
 import { MembersController } from './members.controller';
 import { MembersService } from './members.service';
 
 @Module({
-  imports: [PrismaModule],
+  imports: [
+    MongooseModule.forFeature([{ name: Member.name, schema: MemberSchema }]),
+  ],
   controllers: [MembersController],
   providers: [MembersService],
 })

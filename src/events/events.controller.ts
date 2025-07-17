@@ -15,7 +15,6 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
-import { Event } from '@prisma/client';
 
 import { ApiOkResponsePaginated } from '../shared/decorators/paginated-response.decorator';
 import {
@@ -38,6 +37,7 @@ import {
   GetEventsDto,
   UpdateEventDto,
 } from './dto';
+import { Event } from './entities';
 import { EventsService } from './events.service';
 
 @ApiTags('Events Controller')

@@ -1,14 +1,15 @@
+import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
-import { PrismaClient } from '@prisma/client';
 import { mockDeep } from 'jest-mock-extended';
+import { Model } from 'mongoose';
 
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
-import { PrismaService } from '../prisma/prisma.service';
+import { Publication } from './entities';
 import { PublicationsService } from './publications.service';
 
 describe('PublicationsService', () => {
   let service: PublicationsService;
-  const prismaMock = mockDeep<PrismaClient>();
+  const publicationMock = mockDeep<Model<Publication>>();
   const cloudinaryServiceMock = mockDeep<CloudinaryService>();
 
   beforeEach(async () => {
@@ -16,7 +17,7 @@ describe('PublicationsService', () => {
       providers: [
         PublicationsService,
         { provide: CloudinaryService, useValue: cloudinaryServiceMock },
-        { provide: PrismaService, useValue: prismaMock },
+        { provide: getModelToken(Publication.name), useValue: publicationMock },
       ],
     }).compile();
 

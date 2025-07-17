@@ -1,12 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { Member } from '@prisma/client';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
 
-import { PrismaService } from '../prisma/prisma.service';
 import { CreateMemberDto, FindMembersQueryDto, UpdateMemberDto } from './dto';
+import { Member } from './entities';
 
 @Injectable()
 export class MembersService {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(@InjectModel(Member.name) private memberModel: Model<Member>) {}
   //check addEvent
   async create(
     _dto: CreateMemberDto,

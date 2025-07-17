@@ -1,11 +1,16 @@
 import { Module } from '@nestjs/common';
+import { MongooseModule } from '@nestjs/mongoose';
 
-import { PrismaModule } from '../prisma/prisma.module';
+import { Publication, PublicationSchema } from './entities';
 import { PublicationsController } from './publications.controller';
 import { PublicationsService } from './publications.service';
 
 @Module({
-  imports: [PrismaModule],
+  imports: [
+    MongooseModule.forFeature([
+      { name: Publication.name, schema: PublicationSchema },
+    ]),
+  ],
   controllers: [PublicationsController],
   providers: [PublicationsService],
 })

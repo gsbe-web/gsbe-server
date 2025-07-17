@@ -1,22 +1,22 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Event } from '@prisma/client';
+import { InjectModel } from '@nestjs/mongoose';
 import { endOfMonth, startOfMonth } from 'date-fns';
+import { Model } from 'mongoose';
 
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
-import { PrismaService } from '../prisma/prisma.service';
 import { QueryDto } from '../shared/dto/pagination.dto';
 import { createSlug } from '../shared/generator';
 import { generateFilter } from '../utils/helpers';
 import { PaginatedDataResponseDto } from '../utils/responses/success.responses';
-import { GetCalendarEventsDto } from './dto';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
+import { Event } from './entities';
 
 @Injectable()
 export class EventsService {
   constructor(
     private readonly cloudinaryService: CloudinaryService,
-    private prisma: PrismaService,
+    @InjectModel(Event.name) private eventModel: Model<Event>,
   ) {}
 
   async addEvent(
@@ -24,17 +24,12 @@ export class EventsService {
     file: Express.Multer.File,
   ): Promise<Event> {
     const image = await this.cloudinaryService.uploadFile(file);
-    const fileId = image.public_id;
+    dto.imageId = image.public_id;
+    dto.imageUrl = image.secure_url;
 
-    const slug: string = createSlug(dto.title);
-    const event = await this.prisma.event.create({
-      data: {
-        slug,
-        imageId: fileId,
-        imageUrl: image.secure_url,
-        ...dto,
-      },
-    });
+    dto.slug = createSlug(dto.title);
+
+    const event = await this.eventModel.create({ ...dto });
     return event;
   }
 
@@ -43,11 +38,7 @@ export class EventsService {
     dto: UpdateEventDto,
     file: Express.Multer.File,
   ): Promise<Event> {
-    const event = await this.prisma.event.findFirst({
-      where: {
-        id,
-      },
-    });
+    const event = await this.eventModel.findById(id);
     if (!event) {
       throw new NotFoundException('Event not found');
     }
@@ -63,35 +54,26 @@ export class EventsService {
       const slug: string = dto.title && createSlug(dto.title);
       dto.slug = slug;
     }
-    const updatedEvent = await this.prisma.event.update({
-      where: {
-        id,
-      },
-      data: {
-        ...dto,
-      },
+    const updatedEvent = await this.eventModel.findByIdAndUpdate(id, {
+      ...dto,
     });
     return updatedEvent;
   }
 
   async getEvents(dto: QueryDto): Promise<PaginatedDataResponseDto<Event[]>> {
     const queryFilter = generateFilter(dto);
-
-    const findOptions: object = {
-      where: {
+    const events = await this.eventModel
+      .find({
         ...queryFilter.searchFilter,
-      },
-      ...queryFilter.pageFilter,
-    };
-    const events = await this.prisma.event.findMany({
-      ...findOptions,
+      })
+      .skip(queryFilter.pageFilter.skip)
+      .limit(queryFilter.pageFilter.take)
+      .sort({ updatedAt: -1 });
+
+    const eventsCount = await this.eventModel.countDocuments({
+      ...queryFilter.searchFilter,
     });
 
-    const eventsCount = await this.prisma.event.count({
-      where: {
-        ...queryFilter.searchFilter,
-      },
-    });
     return new PaginatedDataResponseDto<Event[]>(
       events,
       dto.page,
@@ -101,11 +83,7 @@ export class EventsService {
   }
 
   async getEventById(id: string): Promise<Event> {
-    const event = await this.prisma.event.findUnique({
-      where: {
-        id: id,
-      },
-    });
+    const event = await this.eventModel.findById(id);
     if (!event) {
       throw new NotFoundException('Event not found');
     }
@@ -113,47 +91,29 @@ export class EventsService {
   }
 
   async getEventBySlug(slug: string): Promise<Event> {
-    const event = await this.prisma.event.findFirst({
-      where: {
-        slug,
-      },
-    });
+    const event = await this.eventModel.findOne({ slug });
     if (!event) {
       throw new NotFoundException('Event not found');
     }
     return event;
   }
 
-  async getCalendarEvents(date: Date): Promise<GetCalendarEventsDto[]> {
+  async getCalendarEvents(date: Date): Promise<Event[]> {
     const startDate = startOfMonth(date);
     const endDate = endOfMonth(date);
-    const calendarEvents = await this.prisma.event.findMany({
-      where: {
-        date: {
-          gte: startDate,
-          lte: endDate,
-        },
-      },
-      select: {
-        id: true,
-        date: true,
-        title: true,
-        slug: true,
-      },
-    });
+    const calendarEvents = await this.eventModel
+      .find({
+        date: { $gte: startDate, $lte: endDate },
+      })
+      .select('date title slug');
     return calendarEvents;
   }
 
   async deleteEventById(id: string) {
-    const event = await this.prisma.event.findFirst({
-      where: { id },
-    });
+    const event = await this.eventModel.findByIdAndDelete(id);
     if (!event) {
       throw new NotFoundException('event not found');
     }
-    const _deleteEvent = await this.prisma.event.delete({
-      where: { id },
-    });
     await this.cloudinaryService.deleteFile(event.imageId);
     return true;
   }
