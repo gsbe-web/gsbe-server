@@ -1,5 +1,7 @@
+import { CloudinaryService } from '@cloudinary/cloudinary.service';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { createSlug } from '@shared/generator';
 import { generateFilter } from '@utils/helpers';
 import { Model } from 'mongoose';
 
@@ -8,13 +10,22 @@ import { Member } from './entities';
 
 @Injectable()
 export class MembersService {
-  constructor(@InjectModel(Member.name) private memberModel: Model<Member>) {}
-  //check addEvent
+  constructor(
+    @InjectModel(Member.name) private memberModel: Model<Member>,
+    private cloudinaryService: CloudinaryService,
+  ) {}
+
   async create(
-    _dto: CreateMemberDto,
-    _file: Express.Multer.File,
+    dto: CreateMemberDto,
+    file: Express.Multer.File,
   ): Promise<Member> {
-    return;
+    const image = await this.cloudinaryService.uploadFile(file);
+    dto.imageId = image.public_id;
+    dto.imageUrl = image.secure_url;
+    dto.slug = createSlug(dto.name);
+
+    const member = await this.memberModel.create({ ...dto });
+    return member;
   }
 
   async findAll(

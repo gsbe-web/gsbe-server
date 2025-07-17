@@ -30,8 +30,8 @@ import {
   ApiErrorResponse,
   ApiSuccessResponseDto,
   PaginatedDataResponseDto,
+  throwError,
 } from '@utils/responses';
-import { throwError } from 'rxjs';
 
 import {
   CreateMemberDto,
