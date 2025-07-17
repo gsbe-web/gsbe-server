@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Member } from '@prisma/client';
+import { generateFilter } from 'src/utils/helpers';
 
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateMemberDto, FindMembersQueryDto, UpdateMemberDto } from './dto';
@@ -17,15 +18,31 @@ export class MembersService {
 
   //check getEvents
   async findAll(
-    _query: FindMembersQueryDto,
+    query: FindMembersQueryDto,
   ): Promise<{ rows: Member[]; count: number }> {
-    // this.prismaService.member.findMany()
-    // this.prismaService.member.count()
+    const queryFilter = generateFilter(query);
+
+    const findOptions: object = {
+      where: {
+        ...queryFilter.searchFilter,
+      },
+      ...queryFilter.pageFilter,
+    };
+
+    const members = await this.prismaService.member.findMany({
+      ...findOptions,
+    });
+
+    const membersCount = await this.prismaService.member.count({
+      where: {
+        ...queryFilter.searchFilter,
+      },
+    });
     //replace with actual results:  {rows: members, count: membersCount}
 
     return {
-      rows: [],
-      count: 0,
+      rows: members,
+      count: membersCount,
     };
   }
 
