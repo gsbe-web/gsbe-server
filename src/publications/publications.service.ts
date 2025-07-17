@@ -22,7 +22,7 @@ export class PublicationsService {
 
     dto.slug = createSlug(dto.title);
     dto.postImageId = postImage.public_id;
-    dto.profileImageUrl = postImage.secure_url;
+    dto.postImageUrl = postImage.secure_url;
     const publication = await this.publicationModel.create({ ...dto });
 
     return publication;
