@@ -16,11 +16,11 @@
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
-    "test": "jest",
-    "test:watch": "jest --watch",
-    "test:cov": "jest --coverage",
-    "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "test": "jest --detectOpenHandles",
+    "test:watch": "jest --watch --detectOpenHandles",
+    "test:cov": "jest --coverage --detectOpenHandles",
+    "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand --detectOpenHandles",
+    "test:e2e": "jest --config ./test/jest-e2e.json --detectOpenHandles",
     "postinstall": "husky"
   },
   "dependencies": {
@@ -56,6 +56,7 @@
     "@types/jest": "^29.5.14",
     "@types/multer": "^1.4.13",
     "@types/node": "^24.0.0",
+    "@types/streamifier": "^0.1.2",
     "@types/supertest": "^6.0.3",
     "@typescript-eslint/eslint-plugin": "^8.34.0",
     "@typescript-eslint/parser": "^8.34.0",
@@ -94,7 +95,10 @@
       "json",
       "ts"
     ],
-    "rootDir": "src",
+    "rootDir": "./",
+    "modulePaths": [
+      "<rootDir>"
+    ],
     "testRegex": ".*\\.spec\\.ts$",
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
@@ -103,7 +107,16 @@
       "**/*.(t|j)s"
     ],
     "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "moduleNameMapper": {
+      "^@cloudinary(.*)$": "<rootDir>/src/cloudinary/$1",
+      "^@events(.*)$": "<rootDir>/src/events/$1",
+      "^@google-drive(.*)$": "<rootDir>/src/google-drive/$1",
+      "^@members(.*)$": "<rootDir>/src/members/$1",
+      "^@publications(.*)$": "<rootDir>/src/publications/$1",
+      "^@shared(.*)$": "<rootDir>/src/shared/$1",
+      "^@utils(.*)$": "<rootDir>/src/utils/$1"
+    }
   },
   "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
 }

@@ -1,6 +1,21 @@
-import { QueryDto } from '../../shared/dto/pagination.dto';
+import { QueryDto } from '@shared/dto/pagination.dto';
+import { SortOrder } from 'mongoose';
+
 type Filter = {
-  pageFilter: { skip: number; take: number; orderBy: object };
+  pageFilter: {
+    skip: number;
+    take: number;
+    orderBy:
+      | string
+      | {
+          [key: string]:
+            | SortOrder
+            | {
+                $meta: any;
+              };
+        }
+      | [string, SortOrder][];
+  };
   searchFilter?: object;
 };
 

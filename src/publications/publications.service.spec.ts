@@ -1,9 +1,9 @@
+import { CloudinaryService } from '@cloudinary/cloudinary.service';
 import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
 import { mockDeep } from 'jest-mock-extended';
 import { Model } from 'mongoose';
 
-import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { Publication } from './entities';
 import { PublicationsService } from './publications.service';
 

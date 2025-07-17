@@ -1,3 +1,3 @@
-export * from './create-event.dto';
+export * from './create.dto';
 export * from './get.dto';
-export * from './update-event.dto';
+export * from './update.dto';

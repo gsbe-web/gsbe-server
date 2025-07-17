@@ -1,9 +1,9 @@
 import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
+import { getExamplesFromDto } from '@utils/helpers';
 import { mockDeep } from 'jest-mock-extended';
 import { Model } from 'mongoose';
 
-import { getExamplesFromDto } from '../utils/helpers';
 import { FindMembersQueryDto, GetMemberDto } from './dto';
 import { Member } from './entities';
 import { MembersService } from './members.service';

@@ -1,12 +1,12 @@
+import { CloudinaryService } from '@cloudinary/cloudinary.service';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { QueryDto } from '@shared/dto';
+import { createSlug } from '@shared/generator';
+import { generateFilter } from '@utils/helpers';
+import { PaginatedDataResponseDto } from '@utils/responses';
 import { Model } from 'mongoose';
 
-import { CloudinaryService } from '../cloudinary/cloudinary.service';
-import { QueryDto } from '../shared/dto/pagination.dto';
-import { createSlug } from '../shared/generator';
-import { generateFilter } from '../utils/helpers';
-import { PaginatedDataResponseDto } from '../utils/responses/success.responses';
 import { CreatePublicationDto, UpdatePublicationDto } from './dto';
 import { Publication } from './entities';
 
@@ -35,7 +35,7 @@ export class PublicationsService {
       .find({ ...searchFilter })
       .skip(pageFilter.skip)
       .limit(pageFilter.take)
-      .sort({ updatedAt: -1 });
+      .sort(pageFilter.orderBy);
 
     const publicationsNumber = await this.publicationModel.countDocuments({
       ...searchFilter,

@@ -1,15 +1,14 @@
+import { CloudinaryService } from '@cloudinary/cloudinary.service';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { QueryDto } from '@shared/dto';
+import { createSlug } from '@shared/generator';
+import { generateFilter } from '@utils/helpers';
+import { PaginatedDataResponseDto } from '@utils/responses';
 import { endOfMonth, startOfMonth } from 'date-fns';
 import { Model } from 'mongoose';
 
-import { CloudinaryService } from '../cloudinary/cloudinary.service';
-import { QueryDto } from '../shared/dto/pagination.dto';
-import { createSlug } from '../shared/generator';
-import { generateFilter } from '../utils/helpers';
-import { PaginatedDataResponseDto } from '../utils/responses/success.responses';
-import { CreateEventDto } from './dto/create-event.dto';
-import { UpdateEventDto } from './dto/update-event.dto';
+import { CreateEventDto, UpdateEventDto } from './dto';
 import { Event } from './entities';
 
 @Injectable()
@@ -68,7 +67,7 @@ export class EventsService {
       })
       .skip(queryFilter.pageFilter.skip)
       .limit(queryFilter.pageFilter.take)
-      .sort({ updatedAt: -1 });
+      .sort(queryFilter.pageFilter.orderBy);
 
     const eventsCount = await this.eventModel.countDocuments({
       ...queryFilter.searchFilter,

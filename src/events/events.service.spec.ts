@@ -1,10 +1,10 @@
+import { CloudinaryService } from '@cloudinary/cloudinary.service';
 import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
+import { getExamplesFromDto } from '@utils/helpers';
 import { mockDeep } from 'jest-mock-extended';
 import { Model } from 'mongoose';
 
-import { CloudinaryService } from '../cloudinary/cloudinary.service';
-import { getExamplesFromDto } from '../utils/helpers';
 import { GetCalendarEventsDto } from './dto';
 import { Event } from './entities';
 import { EventsService } from './events.service';

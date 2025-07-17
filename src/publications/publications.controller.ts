@@ -21,21 +21,20 @@ import {
   ApiNotFoundResponse,
   ApiTags,
 } from '@nestjs/swagger';
-
-import { ApiOkResponsePaginated } from '../shared/decorators/paginated-response.decorator';
 import {
   ApiCreatedSuccessResponse,
   ApiDeletedSucessResponse,
+  ApiOkResponsePaginated,
   ApiSuccessResponse,
-} from '../shared/decorators/success-response.decorator';
-import { GetParam } from '../shared/dto/get-param.dto';
-import { QueryDto } from '../shared/dto/pagination.dto';
-import { throwError } from '../utils/responses/error.responses';
-import { ApiErrorResponse } from '../utils/responses/error.responses';
+} from '@shared/decorators';
+import { GetParam, QueryDto } from '@shared/dto';
 import {
+  ApiErrorResponse,
   ApiSuccessResponseDto,
   ApiSuccessResponseNull,
-} from '../utils/responses/success.responses';
+} from '@utils/responses';
+import { throwError } from 'rxjs';
+
 import {
   CreatePublicationDto,
   GetLikesDto,

@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { generateFilter } from '@utils/helpers';
 import { Model } from 'mongoose';
 
 import { CreateMemberDto, FindMembersQueryDto, UpdateMemberDto } from './dto';
@@ -16,17 +17,24 @@ export class MembersService {
     return;
   }
 
-  //check getEvents
   async findAll(
-    _query: FindMembersQueryDto,
+    query: FindMembersQueryDto,
   ): Promise<{ rows: Member[]; count: number }> {
-    // this.prismaService.member.findMany()
-    // this.prismaService.member.count()
-    //replace with actual results:  {rows: members, count: membersCount}
+    const { pageFilter, searchFilter } = generateFilter(query);
+
+    const members = await this.memberModel
+      .find({ ...searchFilter })
+      .skip(pageFilter.skip)
+      .limit(pageFilter.take)
+      .sort(pageFilter.orderBy);
+
+    const membersCount = await this.memberModel.countDocuments({
+      ...searchFilter,
+    });
 
     return {
-      rows: [],
-      count: 0,
+      rows: members,
+      count: membersCount,
     };
   }
 
