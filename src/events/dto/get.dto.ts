@@ -3,7 +3,7 @@ import { Type } from 'class-transformer';
 import { IsNotEmpty } from 'class-validator';
 import { addMinutes } from 'date-fns';
 
-import { CreateEventDto } from './create-event.dto';
+import { CreateEventDto } from './create.dto';
 
 export class GetEventsDto extends CreateEventDto {}
 

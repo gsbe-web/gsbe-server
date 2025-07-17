@@ -1,13 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { Member } from '@prisma/client';
-import { generateFilter } from 'src/utils/helpers';
+import { InjectModel } from '@nestjs/mongoose';
+import { generateFilter } from '@utils/helpers';
+import { Model } from 'mongoose';
 
-import { PrismaService } from '../prisma/prisma.service';
 import { CreateMemberDto, FindMembersQueryDto, UpdateMemberDto } from './dto';
+import { Member } from './entities';
 
 @Injectable()
 export class MembersService {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(@InjectModel(Member.name) private memberModel: Model<Member>) {}
   //check addEvent
   async create(
     _dto: CreateMemberDto,
@@ -16,29 +17,20 @@ export class MembersService {
     return;
   }
 
-  //check getEvents
   async findAll(
     query: FindMembersQueryDto,
   ): Promise<{ rows: Member[]; count: number }> {
-    const queryFilter = generateFilter(query);
+    const { pageFilter, searchFilter } = generateFilter(query);
 
-    const findOptions: object = {
-      where: {
-        ...queryFilter.searchFilter,
-      },
-      ...queryFilter.pageFilter,
-    };
+    const members = await this.memberModel
+      .find({ ...searchFilter })
+      .skip(pageFilter.skip)
+      .limit(pageFilter.take)
+      .sort(pageFilter.orderBy);
 
-    const members = await this.prismaService.member.findMany({
-      ...findOptions,
+    const membersCount = await this.memberModel.countDocuments({
+      ...searchFilter,
     });
-
-    const membersCount = await this.prismaService.member.count({
-      where: {
-        ...queryFilter.searchFilter,
-      },
-    });
-    //replace with actual results:  {rows: members, count: membersCount}
 
     return {
       rows: members,

@@ -1,16 +1,17 @@
+import { CloudinaryService } from '@cloudinary/cloudinary.service';
+import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
-import { PrismaClient } from '@prisma/client';
+import { getExamplesFromDto } from '@utils/helpers';
 import { mockDeep } from 'jest-mock-extended';
+import { Model } from 'mongoose';
 
-import { CloudinaryService } from '../cloudinary/cloudinary.service';
-import { PrismaService } from '../prisma/prisma.service';
-import { getExamplesFromDto } from '../utils/helpers';
 import { GetCalendarEventsDto } from './dto';
+import { Event } from './entities';
 import { EventsService } from './events.service';
 
 describe('EventsService', () => {
   let service: EventsService;
-  const prismaMock = mockDeep<PrismaClient>();
+  const eventModelMock = mockDeep<Model<Event>>();
   const cloudinaryServiceMock = mockDeep<CloudinaryService>();
 
   beforeEach(async () => {
@@ -18,7 +19,7 @@ describe('EventsService', () => {
       providers: [
         EventsService,
         { provide: CloudinaryService, useValue: cloudinaryServiceMock },
-        { provide: PrismaService, useValue: prismaMock },
+        { provide: getModelToken(Event.name), useValue: eventModelMock },
       ],
     }).compile();
 
@@ -33,7 +34,11 @@ describe('EventsService', () => {
     it('should return a list of calendar events', async () => {
       //arrange
       const data = [getExamplesFromDto(GetCalendarEventsDto)];
-      prismaMock.event.findMany.mockResolvedValue(data as any);
+      const mockQuery = {
+        select: jest.fn().mockResolvedValue(data),
+      };
+
+      eventModelMock.find.mockReturnValue(mockQuery as any);
       const today = new Date();
 
       //act

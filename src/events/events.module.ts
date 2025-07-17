@@ -1,11 +1,14 @@
 import { Module } from '@nestjs/common';
+import { MongooseModule } from '@nestjs/mongoose';
 
-import { PrismaModule } from '../prisma/prisma.module';
+import { Event, EventSchema } from './entities';
 import { EventsController } from './events.controller';
 import { EventsService } from './events.service';
 
 @Module({
-  imports: [PrismaModule],
+  imports: [
+    MongooseModule.forFeature([{ name: Event.name, schema: EventSchema }]),
+  ],
   controllers: [EventsController],
   providers: [EventsService],
 })

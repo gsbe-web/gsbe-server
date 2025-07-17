@@ -1,18 +1,20 @@
+import { CloudinaryService } from '@cloudinary/cloudinary.service';
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Publication } from '@prisma/client';
+import { InjectModel } from '@nestjs/mongoose';
+import { QueryDto } from '@shared/dto';
+import { createSlug } from '@shared/generator';
+import { generateFilter } from '@utils/helpers';
+import { PaginatedDataResponseDto } from '@utils/responses';
+import { Model } from 'mongoose';
 
-import { CloudinaryService } from '../cloudinary/cloudinary.service';
-import { PrismaService } from '../prisma/prisma.service';
-import { QueryDto } from '../shared/dto/pagination.dto';
-import { createSlug } from '../shared/generator';
-import { PaginatedDataResponseDto } from '../utils/responses/success.responses';
 import { CreatePublicationDto, UpdatePublicationDto } from './dto';
+import { Publication } from './entities';
 
 @Injectable()
 export class PublicationsService {
   constructor(
-    private readonly prisma: PrismaService,
     private cloudinaryService: CloudinaryService,
+    @InjectModel(Publication.name) private publicationModel: Model<Publication>,
   ) {}
 
   async create(dto: CreatePublicationDto, file: Express.Multer.File) {
@@ -21,103 +23,66 @@ export class PublicationsService {
     dto.slug = createSlug(dto.title);
     dto.postImageId = postImage.public_id;
     dto.profileImageUrl = postImage.secure_url;
-    const publication = await this.prisma.publication.create({
-      data: {
-        ...dto,
-      },
-    });
+    const publication = await this.publicationModel.create({ ...dto });
+
     return publication;
   }
 
   async retrieveAll(dto: QueryDto) {
-    const offset = (dto.page - 1) * dto.pageSize;
-    if (dto.search && dto.searchFields) {
-      const searchBodies = dto.searchFields.map((field) => ({
-        [field]: {
-          contains: dto.search,
-          mode: 'insensitive',
-        },
-      }));
-      dto.searchQueries = searchBodies;
-    }
+    const { pageFilter, searchFilter } = generateFilter(dto);
 
-    const findOptions: object = {
-      where: {
-        OR: dto.searchQueries,
-      },
-      take: dto.pageSize,
-      skip: offset,
-      orderBy: {
-        dateTimePosted: 'desc',
-      },
-    };
+    const publications = await this.publicationModel
+      .find({ ...searchFilter })
+      .skip(pageFilter.skip)
+      .limit(pageFilter.take)
+      .sort(pageFilter.orderBy);
 
-    const publications = await this.prisma.publication.findMany({
-      ...findOptions,
-    });
-
-    const numberOfPublications = await this.prisma.publication.count({
-      where: {
-        OR: dto.searchQueries,
-      },
-      orderBy: {
-        dateTimePosted: 'desc',
-      },
+    const publicationsNumber = await this.publicationModel.countDocuments({
+      ...searchFilter,
     });
 
     return new PaginatedDataResponseDto<Publication[]>(
       publications,
       dto.page,
       dto.pageSize,
-      numberOfPublications,
+      publicationsNumber,
     );
   }
 
   async retrieveById(id: string): Promise<Publication> {
-    const publication = await this.prisma.publication.findUnique({
-      where: {
-        id: id,
-      },
-    });
+    const publication = await this.publicationModel.findById(id);
     if (!publication) {
-      throw new NotFoundException('Publication item not found');
+      throw new NotFoundException('Publication not found');
     }
     return publication;
   }
 
   async retrieveBySlug(slug: string): Promise<Publication> {
-    const publication = await this.prisma.publication.findUnique({
-      where: {
-        slug: slug,
-      },
-    });
+    const publication = await this.publicationModel.findOne({ slug });
     if (!publication) {
-      throw new NotFoundException(`Publication not found`);
+      throw new NotFoundException('Publication not found');
     }
     return publication;
   }
 
   async updateLikes(slug: string, likeCount: number) {
-    const updatedLike = await this.prisma.publication.update({
-      where: {
-        slug: slug,
-      },
-      data: {
-        likes: likeCount,
-      },
-    });
+    const updatedLike = await this.publicationModel.findOneAndUpdate(
+      { slug },
+      { likes: likeCount },
+    );
+
+    if (!updatedLike) {
+      throw new NotFoundException('Publication not found');
+    }
+
     return updatedLike;
   }
 
   async getLikeCount(slug: string) {
-    const publication = await this.prisma.publication.findUnique({
-      where: {
-        slug,
-      },
-      select: {
-        likes: true,
-      },
-    });
+    const publication = await this.publicationModel
+      .findOne({ slug })
+      .select('likes');
+
     if (!publication) {
       throw new NotFoundException('Publication not found');
     }
@@ -125,9 +90,7 @@ export class PublicationsService {
   }
 
   async edit(id: string, dto: UpdatePublicationDto, file: Express.Multer.File) {
-    const publication = await this.prisma.publication.findUnique({
-      where: { id },
-    });
+    const publication = await this.publicationModel.findById(id);
 
     if (!publication) {
       throw new NotFoundException('Publication not found');
@@ -146,32 +109,20 @@ export class PublicationsService {
       const slug: string = dto.title && createSlug(dto.title);
       dto.slug = slug;
     }
-
-    const updatedPublication = await this.prisma.publication.update({
-      where: {
-        id,
-      },
-      data: {
-        ...dto,
-      },
-    });
+    const updatedPublication = await this.publicationModel.findByIdAndUpdate(
+      id,
+      dto,
+    );
     return updatedPublication;
   }
 
   async delete(id: string) {
-    const publication = await this.prisma.publication.findFirst({
-      where: { id },
-    });
+    const publication = await this.publicationModel.findByIdAndDelete(id);
 
     if (!publication) {
       throw new NotFoundException('Publication not found');
     }
-
-    const deletedPublication = await this.prisma.publication.delete({
-      where: { id },
-    });
-
-    await this.cloudinaryService.deleteFile(deletedPublication.postImageId);
+    await this.cloudinaryService.deleteFile(publication.postImageId);
 
     return true;
   }

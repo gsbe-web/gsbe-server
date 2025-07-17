@@ -1,7 +1,6 @@
 import { applyDecorators, Type } from '@nestjs/common';
 import { ApiExtraModels, ApiOkResponse, getSchemaPath } from '@nestjs/swagger';
-
-import { PaginatedDataResponseDto } from '../../utils/responses/success.responses';
+import { PaginatedDataResponseDto } from '@utils/responses/success.responses';
 
 export const ApiOkResponsePaginated = <T extends Type<unknown>>({
   type,

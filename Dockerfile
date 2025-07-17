@@ -8,8 +8,6 @@ RUN yarn install --frozen-lockfile --ignore-scripts
 
 COPY . .
 
-RUN yarn prisma generate
-
 RUN yarn build
 
 

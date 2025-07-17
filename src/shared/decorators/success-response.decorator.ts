@@ -5,11 +5,10 @@ import {
   ApiOkResponse,
   getSchemaPath,
 } from '@nestjs/swagger';
-
 import {
   ApiSuccessResponseDto,
   ApiSuccessResponseNull,
-} from '../../utils/responses/success.responses';
+} from '@utils/responses/success.responses';
 
 export const ApiSuccessResponse = ({
   type,

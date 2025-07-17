@@ -20,21 +20,19 @@ import {
   ApiInternalServerErrorResponse,
   ApiNotFoundResponse,
 } from '@nestjs/swagger';
-
-import { ApiOkResponsePaginated } from '../shared/decorators/paginated-response.decorator';
 import {
   ApiCreatedSuccessResponse,
   ApiDeletedSucessResponse,
+  ApiOkResponsePaginated,
   ApiSuccessResponse,
-} from '../shared/decorators/success-response.decorator';
+} from '@shared/decorators';
 import {
   ApiErrorResponse,
-  throwError,
-} from '../utils/responses/error.responses';
-import {
   ApiSuccessResponseDto,
   PaginatedDataResponseDto,
-} from '../utils/responses/success.responses';
+} from '@utils/responses';
+import { throwError } from 'rxjs';
+
 import {
   CreateMemberDto,
   FindMembersQueryDto,
