@@ -1,5 +1,5 @@
 import { CloudinaryService } from '@cloudinary/cloudinary.service';
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { createSlug } from '@shared/generator';
 import { generateFilter } from '@utils/helpers';
@@ -50,13 +50,22 @@ export class MembersService {
   }
 
   //check getEventById
-  async findOneById(_id: string): Promise<Member> {
-    return;
+  async findOneById(id: string): Promise<Member> {
+    const member = await this.memberModel.findById(id);
+    if (!member) {
+      throw new NotFoundException('ember not found');
+    }
+
+    return member;
   }
 
   //check getEventBySlug
-  async findOneBySlug(_slug: string): Promise<Member> {
-    return;
+  async findOneBySlug(slug: string): Promise<Member> {
+    const member = await this.memberModel.findOne({ slug });
+    if (!member) {
+      throw new NotFoundException('Member not found');
+    }
+    return member;
   }
 
   //check editEvent
