@@ -124,12 +124,15 @@ describe('MembersService', () => {
       const id = new mongoose.Types.ObjectId().toString();
       memberMock.findById.calledWith(id).mockResolvedValue(null);
 
-      // Act
-      const response = await service.findOneById(id);
-
-      // Assert
-      await expect(response).rejects.toThrow(NotFoundException);
-      await expect(response).rejects.toThrow('Member not found');
+      try {
+        // Act
+        await service.findOneById(id);
+        fail('Expected NotFoundException to be thrown');
+      } catch (error) {
+        // Assert
+        expect(error).toBeInstanceOf(NotFoundException);
+        expect(error.message).toBe('Member not found');
+      }
     });
 
     it('should return a member based on its slug', async () => {
@@ -151,12 +154,51 @@ describe('MembersService', () => {
       const slug = createSlug(faker.book.title());
       memberMock.findOne.calledWith({ slug }).mockResolvedValue(null);
 
-      // Act
-      const response = await service.findOneBySlug(slug);
+      try {
+        // Act
+        await service.findOneBySlug(slug);
+        fail('Expected NotFoundException to be thrown');
+      } catch (error) {
+        // Assert
+        expect(error).toBeInstanceOf(NotFoundException);
+        expect(error.message).toBe('Member not found');
+      }
+    });
+  });
 
+  describe('deleteMember', () => {
+    it('should delete a member', async () => {
+      // Arrange
+      const data = getExamplesFromDto(GetMemberDto);
+      memberMock.findByIdAndDelete.mockResolvedValue(data);
+      cloudinaryServiceMock.deleteFile.mockReturnValue(undefined);
+      // Act
+      const response = await service.remove(data.id);
       // Assert
-      await expect(response).rejects.toThrow(NotFoundException);
-      await expect(response).rejects.toThrow('Member not found');
+      expect(memberMock.findByIdAndDelete).toHaveBeenCalled();
+      expect(memberMock.findByIdAndDelete).toHaveBeenCalledWith(data.id);
+      expect(cloudinaryServiceMock.deleteFile).toHaveBeenCalled();
+      expect(cloudinaryServiceMock.deleteFile).toHaveBeenCalledWith(
+        data.imageId,
+      );
+      expect(response).toEqual(true);
+    });
+
+    it('should throw an error if member not found', async () => {
+      // Arrange
+      const id = new mongoose.Types.ObjectId().toString();
+      memberMock.findByIdAndDelete.calledWith(id).mockResolvedValue(null);
+      cloudinaryServiceMock.deleteFile.mockReturnValue(undefined);
+
+      try {
+        // Act
+        await service.remove(id);
+        fail('Expected NotFoundException to be thrown');
+      } catch (error) {
+        // Assert
+        expect(error).toBeInstanceOf(NotFoundException);
+        expect(error.message).toBe('Member not found');
+      }
     });
   });
 });
