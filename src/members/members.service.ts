@@ -53,7 +53,7 @@ export class MembersService {
   async findOneById(id: string): Promise<Member> {
     const member = await this.memberModel.findById(id);
     if (!member) {
-      throw new NotFoundException('ember not found');
+      throw new NotFoundException('Member not found');
     }
 
     return member;
