@@ -2,7 +2,7 @@ import { CloudinaryService } from '@cloudinary/cloudinary.service';
 import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getExamplesFromDto } from '@utils/helpers';
-import { mockDeep } from 'jest-mock-extended';
+import { DeepMockProxy, mockDeep, mockReset } from 'jest-mock-extended';
 import { Model } from 'mongoose';
 
 import { GetCalendarEventsDto } from './dto';
@@ -11,10 +11,13 @@ import { EventsService } from './events.service';
 
 describe('EventsService', () => {
   let service: EventsService;
-  const eventModelMock = mockDeep<Model<Event>>();
-  const cloudinaryServiceMock = mockDeep<CloudinaryService>();
+  let eventModelMock: DeepMockProxy<Model<Event>>;
+  let cloudinaryServiceMock: DeepMockProxy<CloudinaryService>;
 
   beforeEach(async () => {
+    eventModelMock = mockDeep<Model<Event>>();
+    cloudinaryServiceMock = mockDeep<CloudinaryService>();
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         EventsService,
@@ -24,6 +27,13 @@ describe('EventsService', () => {
     }).compile();
 
     service = module.get<EventsService>(EventsService);
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
+    jest.restoreAllMocks();
+    mockReset(eventModelMock);
+    mockReset(cloudinaryServiceMock);
   });
 
   it('should be defined', () => {

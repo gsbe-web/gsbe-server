@@ -8,7 +8,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { createSlug } from '@shared/generator';
 import { getExamplesFromDto } from '@utils/helpers';
 import { UploadApiResponse } from 'cloudinary';
-import { mockDeep } from 'jest-mock-extended';
+import { DeepMockProxy, mockDeep, mockReset } from 'jest-mock-extended';
 import mongoose, { Model } from 'mongoose';
 import { Readable } from 'stream';
 
@@ -23,10 +23,14 @@ import { MembersService } from './members.service';
 
 describe('MembersService', () => {
   let service: MembersService;
-  const memberMock = mockDeep<Model<Member>>();
-  const cloudinaryServiceMock = mockDeep<CloudinaryService>();
+  let memberMock: DeepMockProxy<Model<Member>> = mockDeep<Model<Member>>();
+  let cloudinaryServiceMock: DeepMockProxy<CloudinaryService> =
+    mockDeep<CloudinaryService>();
 
   beforeEach(async () => {
+    memberMock = mockDeep<Model<Member>>();
+    cloudinaryServiceMock = mockDeep<CloudinaryService>();
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         MembersService,
@@ -42,6 +46,13 @@ describe('MembersService', () => {
     }).compile();
 
     service = module.get<MembersService>(MembersService);
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
+    jest.restoreAllMocks();
+    mockReset(memberMock);
+    mockReset(cloudinaryServiceMock);
   });
 
   it('should be defined', () => {
@@ -127,9 +138,11 @@ describe('MembersService', () => {
       try {
         // Act
         await service.findOneById(id);
-        fail('Expected NotFoundException to be thrown');
+        fail('Expected NotFoundExceptionToBeThrown');
       } catch (error) {
         // Assert
+        expect(memberMock.findById).toHaveBeenCalled();
+        expect(memberMock.findById).toHaveBeenCalledWith(id);
         expect(error).toBeInstanceOf(NotFoundException);
         expect(error.message).toBe('Member not found');
       }
@@ -157,9 +170,11 @@ describe('MembersService', () => {
       try {
         // Act
         await service.findOneBySlug(slug);
-        fail('Expected NotFoundException to be thrown');
+        fail('Expected NotFoundExceptionToBeThrown');
       } catch (error) {
         // Assert
+        expect(memberMock.findOne).toHaveBeenCalled();
+        expect(memberMock.findOne).toHaveBeenCalledWith({ slug });
         expect(error).toBeInstanceOf(NotFoundException);
         expect(error.message).toBe('Member not found');
       }
@@ -193,9 +208,13 @@ describe('MembersService', () => {
       try {
         // Act
         await service.remove(id);
-        fail('Expected NotFoundException to be thrown');
+        fail('Expected NotFoundExceptionToBeThrown');
       } catch (error) {
+        console.log(error);
         // Assert
+        expect(memberMock.findByIdAndDelete).toHaveBeenCalled();
+        expect(memberMock.findByIdAndDelete).toHaveBeenCalledWith(id);
+        expect(cloudinaryServiceMock.deleteFile).toHaveBeenCalled();
         expect(error).toBeInstanceOf(NotFoundException);
         expect(error.message).toBe('Member not found');
       }
