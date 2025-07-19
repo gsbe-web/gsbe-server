@@ -78,7 +78,13 @@ export class MembersService {
   }
 
   //check deleteEventById
-  async remove(_id: string): Promise<void> {
-    return;
+  async remove(id: string): Promise<boolean> {
+    const member = await this.memberModel.findByIdAndDelete(id);
+    if (!member) {
+      throw new NotFoundException('Member not found');
+    }
+    await this.cloudinaryService.deleteFile(member.imageId);
+
+    return true;
   }
 }
