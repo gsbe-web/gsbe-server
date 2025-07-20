@@ -33,7 +33,7 @@ import {
   CreateEventDto,
   GetCalendarEventsDto,
   GetCalendarEventsQueryDto,
-  GetEventsDto,
+  GetEventDto,
   UpdateEventDto,
 } from './dto';
 import { Event } from './entities';
@@ -127,7 +127,7 @@ export class EventsController {
 
   @Get()
   @ApiOkResponsePaginated({
-    type: GetEventsDto,
+    type: GetEventDto,
     description: 'Events retrieved succesfully',
   })
   async getEvents(@Query() dto: QueryDto) {
@@ -145,7 +145,7 @@ export class EventsController {
 
   @Get(':id')
   @ApiSuccessResponse({
-    type: GetEventsDto,
+    type: GetEventDto,
     description: 'Event successfully retrieved',
   })
   async getEventById(@Param() param: GetParam) {
@@ -164,7 +164,7 @@ export class EventsController {
 
   @Get('/slug/:slug')
   @ApiSuccessResponse({
-    type: GetEventsDto,
+    type: GetEventDto,
     description: 'Event successfully retrieved',
   })
   async getEventBySlug(@Param('slug') slug: string) {

@@ -6,7 +6,7 @@ import { getExamplesFromDto } from '@utils/helpers';
 import { DeepMockProxy, mockDeep, mockReset } from 'jest-mock-extended';
 import mongoose, { Model } from 'mongoose';
 
-import { GetCalendarEventsDto, GetEventsDto } from './dto';
+import { GetCalendarEventsDto, GetEventDto } from './dto';
 import { Event } from './entities';
 import { EventsService } from './events.service';
 
@@ -63,7 +63,7 @@ describe('EventsService', () => {
   describe('deleteEvent', () => {
     it('should remove an event', async () => {
       // Arrange
-      const data = getExamplesFromDto(GetEventsDto);
+      const data = getExamplesFromDto(GetEventDto);
       eventModelMock.findByIdAndDelete
         .calledWith(data.id)
         .mockResolvedValue(data);

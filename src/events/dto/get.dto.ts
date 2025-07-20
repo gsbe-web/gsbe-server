@@ -5,7 +5,7 @@ import { addMinutes } from 'date-fns';
 
 import { CreateEventDto } from './create.dto';
 
-export class GetEventsDto extends CreateEventDto {}
+export class GetEventDto extends CreateEventDto {}
 
 export class GetCalendarEventsQueryDto {
   @ApiProperty({ example: new Date() })
