@@ -111,7 +111,7 @@ export class EventsService {
   async deleteEventById(id: string) {
     const event = await this.eventModel.findByIdAndDelete(id);
     if (!event) {
-      throw new NotFoundException('event not found');
+      throw new NotFoundException('Event not found');
     }
     await this.cloudinaryService.deleteFile(event.imageId);
     return true;

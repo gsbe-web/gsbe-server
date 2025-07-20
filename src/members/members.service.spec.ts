@@ -203,18 +203,16 @@ describe('MembersService', () => {
       // Arrange
       const id = new mongoose.Types.ObjectId().toString();
       memberMock.findByIdAndDelete.calledWith(id).mockResolvedValue(null);
-      cloudinaryServiceMock.deleteFile.mockReturnValue(undefined);
+      cloudinaryServiceMock.deleteFile.mockResolvedValue(undefined);
 
       try {
         // Act
         await service.remove(id);
         fail('Expected NotFoundExceptionToBeThrown');
       } catch (error) {
-        console.log(error);
         // Assert
         expect(memberMock.findByIdAndDelete).toHaveBeenCalled();
         expect(memberMock.findByIdAndDelete).toHaveBeenCalledWith(id);
-        expect(cloudinaryServiceMock.deleteFile).toHaveBeenCalled();
         expect(error).toBeInstanceOf(NotFoundException);
         expect(error.message).toBe('Member not found');
       }
