@@ -17,6 +17,7 @@ import {
   FindMembersQueryDto,
   GetMemberDto,
   MemberDto,
+  UpdateMemberDto,
 } from './dto';
 import { Member } from './entities';
 import { MembersService } from './members.service';
@@ -177,6 +178,144 @@ describe('MembersService', () => {
         expect(memberMock.findOne).toHaveBeenCalledWith({ slug });
         expect(error).toBeInstanceOf(NotFoundException);
         expect(error.message).toBe('Member not found');
+      }
+    });
+  });
+
+  describe('editMember', () => {
+    it('should update a member', async () => {
+      // Arrange
+      const data = getExamplesFromDto(GetMemberDto);
+      memberMock.findById.calledWith(data.id).mockResolvedValue(data);
+
+      const payload = getExamplesFromDto(UpdateMemberDto);
+      payload.description = faker.food.description();
+      payload.name = null;
+      data.description = payload.description;
+
+      memberMock.findByIdAndUpdate.mockResolvedValue(data);
+
+      // Act
+      const response = await service.update(data.id, payload);
+
+      // Assert
+      expect(memberMock.findById).toHaveBeenCalled();
+      expect(memberMock.findById).toHaveBeenCalledWith(data.id);
+      expect(memberMock.findByIdAndUpdate).toHaveBeenCalled();
+      expect(memberMock.findByIdAndUpdate).toHaveBeenCalledWith(
+        data.id,
+        payload,
+        { new: true },
+      );
+      expect(response).toEqual(data);
+    });
+
+    it("should update a member's name", async () => {
+      // Arrange
+      const data = getExamplesFromDto(GetMemberDto);
+      memberMock.findById.calledWith(data.id).mockResolvedValue(data);
+
+      const payload = getExamplesFromDto(UpdateMemberDto);
+      payload.name = faker.company.name();
+      const expectedSlug = createSlug(payload.name);
+      (createSlug as jest.Mock).mockReturnValue(expectedSlug);
+      data.name = payload.name;
+      data.slug = expectedSlug;
+
+      memberMock.findByIdAndUpdate.mockResolvedValue(data);
+
+      // Act
+      const response = await service.update(data.id, payload);
+
+      // Assert
+      expect(memberMock.findById).toHaveBeenCalled();
+      expect(memberMock.findById).toHaveBeenCalledWith(data.id);
+      expect(memberMock.findByIdAndUpdate).toHaveBeenCalled();
+      expect(memberMock.findByIdAndUpdate).toHaveBeenCalledWith(
+        data.id,
+        payload,
+        { new: true },
+      );
+      payload.slug = expectedSlug;
+      expect(response).toEqual(payload);
+    });
+
+    it("should update a member's picture", async () => {
+      // Arrange
+      const data = getExamplesFromDto(GetMemberDto);
+      const payload = getExamplesFromDto(UpdateMemberDto);
+      payload.name = null;
+
+      const file: Express.Multer.File = {
+        fieldname: 'file',
+        originalname: 'image.jpeg',
+        encoding: '7-bit',
+        mimetype: 'text/plain',
+        size: 68,
+        stream: new Readable(),
+        destination: 'cloudinary_assets',
+        filename: 'image.jpeg',
+        path: '/assets/cloudinary_assets',
+        buffer: Buffer.from(faker.book.title()),
+      };
+      const publicId = faker.database.mongodbObjectId();
+      const secureUrl = faker.image.url();
+
+      memberMock.findById.calledWith(data.id).mockResolvedValue(data);
+
+      cloudinaryServiceMock.updateFileContent
+        .calledWith(file, data.imageId)
+        .mockResolvedValue({
+          public_id: publicId,
+          secure_url: secureUrl,
+        } as UploadApiResponse);
+
+      memberMock.findByIdAndUpdate.mockResolvedValue({
+        ...payload,
+        imageId: publicId,
+        imageUrl: secureUrl,
+      });
+
+      // Act
+      const response = await service.update(data.id, payload, file);
+
+      // Assert
+      expect(memberMock.findById).toHaveBeenCalled();
+      expect(memberMock.findById).toHaveBeenCalledWith(data.id);
+      expect(cloudinaryServiceMock.updateFileContent).toHaveBeenCalled();
+      expect(cloudinaryServiceMock.updateFileContent).toHaveBeenCalledWith(
+        file,
+        data.imageId,
+      );
+      expect(memberMock.findByIdAndUpdate).toHaveBeenCalled();
+      expect(memberMock.findByIdAndUpdate).toHaveBeenCalledWith(
+        data.id,
+        payload,
+        { new: true },
+      );
+      expect(response).toEqual({
+        ...payload,
+        imageId: publicId,
+        imageUrl: secureUrl,
+      });
+    });
+
+    it('should throw a NotFoundException if member not found', async () => {
+      // Arrange
+      const id = new mongoose.Types.ObjectId().toString();
+      const payload = getExamplesFromDto(UpdateMemberDto);
+      memberMock.findById.calledWith(id).mockResolvedValue(null);
+
+      try {
+        // Act
+        await service.update(id, payload);
+        fail('supposed to have thrown a NotFoundException');
+      } catch (error) {
+        // Assert
+        expect(memberMock.findById).toHaveBeenCalled();
+        expect(memberMock.findById).toHaveBeenCalledWith(id);
+        expect(error).toBeInstanceOf(NotFoundException);
+        expect(error.message).toEqual('Member not found');
       }
     });
   });

@@ -6,7 +6,24 @@
       "request": "launch",
       "name": "Debug Nest Framework",
       "runtimeExecutable": "yarn",
-      "runtimeArgs": ["start:debug", "--", "--inspect-brk"],
+      "runtimeArgs": [
+        "start:debug",
+        "--",
+        "--inspect-brk"
+      ],
+      "autoAttachChildProcesses": true,
+      "restart": true,
+      "sourceMaps": true,
+      "stopOnEntry": false
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug Nest Framework Unit Tests",
+      "runtimeExecutable": "yarn",
+      "runtimeArgs": [
+        "test:debug"
+      ],
       "autoAttachChildProcesses": true,
       "restart": true,
       "sourceMaps": true,
@@ -17,7 +34,9 @@
       "request": "launch",
       "name": "Debug Nest Framework Tests",
       "runtimeExecutable": "yarn",
-      "runtimeArgs": ["test:e2e"],
+      "runtimeArgs": [
+        "test:e2e"
+      ],
       "autoAttachChildProcesses": true,
       "restart": true,
       "sourceMaps": true,

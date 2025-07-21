@@ -35,7 +35,7 @@ export class EventsService {
   async editEvent(
     id: string,
     dto: UpdateEventDto,
-    file: Express.Multer.File,
+    file?: Express.Multer.File,
   ): Promise<Event> {
     const event = await this.eventModel.findById(id);
     if (!event) {
@@ -53,9 +53,13 @@ export class EventsService {
       const slug: string = dto.title && createSlug(dto.title);
       dto.slug = slug;
     }
-    const updatedEvent = await this.eventModel.findByIdAndUpdate(id, {
-      ...dto,
-    });
+    const updatedEvent = await this.eventModel.findByIdAndUpdate(
+      id,
+      {
+        ...dto,
+      },
+      { new: true },
+    );
     return updatedEvent;
   }
 
