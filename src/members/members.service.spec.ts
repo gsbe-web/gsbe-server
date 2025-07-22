@@ -222,7 +222,7 @@ describe('MembersService', () => {
       data.name = payload.name;
       data.slug = expectedSlug;
 
-      memberMock.findByIdAndUpdate.mockResolvedValue(data);
+      memberMock.findByIdAndUpdate.mockResolvedValue(payload);
 
       // Act
       const response = await service.update(data.id, payload);
