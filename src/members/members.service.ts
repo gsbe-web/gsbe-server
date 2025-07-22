@@ -70,11 +70,32 @@ export class MembersService {
 
   //check editEvent
   async update(
-    _id: string,
-    _dto: UpdateMemberDto,
-    _file?: Express.Multer.File,
+    id: string,
+    dto: UpdateMemberDto,
+    file?: Express.Multer.File,
   ): Promise<Member> {
-    return;
+    const member = await this.memberModel.findById(id);
+    if (!member) {
+      throw new NotFoundException('Member not found');
+    }
+    if (file) {
+      const newImage = await this.cloudinaryService.updateFileContent(
+        file,
+        member.imageId,
+      );
+      dto.imageId = newImage.public_id;
+      dto.imageUrl = newImage.secure_url;
+    }
+
+    const updatedMember = await this.memberModel.findByIdAndUpdate(
+      id,
+      {
+        ...dto,
+      },
+      { new: true },
+    );
+
+    return updatedMember;
   }
 
   //check deleteEventById
