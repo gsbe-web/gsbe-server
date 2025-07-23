@@ -29,10 +29,10 @@ export class InitializeResponseDataDto {
   @ApiResponseProperty({
     example: 'https://checkout.paystack.com/nkdks46nymizns7',
   })
-  authorization_url: string;
+  authorizationUrl: string;
 
   @ApiResponseProperty({ example: 'nkdks46nymizns7' })
-  access_code: string;
+  accessCode: string;
 
   @ApiResponseProperty({ example: 'nms6uvr1pl' })
   reference: string;

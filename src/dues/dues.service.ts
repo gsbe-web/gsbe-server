@@ -38,8 +38,8 @@ export class DuesService {
 
       await due.updateOne(
         {
-          authorizationUrl: initResponse.data.authorization_url,
-          accessCode: initResponse.data.access_code,
+          authorizationUrl: initResponse.data.authorizationUrl,
+          accessCode: initResponse.data.accessCode,
         },
         { session },
       );

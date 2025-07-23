@@ -2,6 +2,7 @@ import { HttpService } from '@nestjs/axios';
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { createHmac } from 'crypto';
+import { camelizeKeys } from 'humps';
 import { catchError, firstValueFrom } from 'rxjs';
 
 import {
@@ -39,7 +40,7 @@ export class PaystackService {
         }),
       ),
     );
-    return response.data as InitializeResponseDto;
+    return camelizeKeys(response.data) as InitializeResponseDto;
   }
 
   async verifyWebhook(data: PaystackWebhookDto, signature: string) {
