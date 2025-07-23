@@ -1,4 +1,5 @@
 import { CloudinaryModule } from '@cloudinary/cloudinary.module';
+import { DuesModule } from '@dues/dues.module';
 import { EventsModule } from '@events/events.module';
 import { GoogleDriveModule } from '@google-drive/google-drive.module';
 import { MembersModule } from '@members/members.module';
@@ -10,4 +11,5 @@ export const IndexModules = [
   CloudinaryModule,
   GoogleDriveModule,
   MembersModule,
+  DuesModule,
 ];

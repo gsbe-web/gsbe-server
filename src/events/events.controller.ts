@@ -14,7 +14,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiConsumes } from '@nestjs/swagger';
 import {
   ApiCreatedSuccessResponse,
   ApiDeletedSucessResponse,
@@ -39,7 +39,6 @@ import {
 import { Event } from './entities';
 import { EventsService } from './events.service';
 
-@ApiTags('Events Controller')
 @Controller('events')
 export class EventsController {
   private logger = new Logger(EventsController.name);

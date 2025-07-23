@@ -3,13 +3,14 @@ import {
   ApiPropertyOptional,
   ApiResponseProperty,
 } from '@nestjs/swagger';
+import { GenericResponseDto } from '@shared/dto';
 import { IsEnum, IsNotEmpty, IsOptional, ValidateIf } from 'class-validator';
 
 export enum MemberType {
   EXECUTIVE = 'EXECUTIVE',
   GENERAL = 'GENERAL',
 }
-export class MemberDto {
+export class MemberDto extends GenericResponseDto {
   @ApiProperty({
     description: 'The type of member in the organization.',
     example: 'EXECUTIVE',
@@ -79,16 +80,6 @@ export class MemberDto {
   instagramUrl: string;
 
   @ApiResponseProperty({
-    example: 'a1b2c3d4',
-  })
-  id: string;
-
-  @ApiResponseProperty({
-    example: 'jane-doe',
-  })
-  slug: string;
-
-  @ApiResponseProperty({
     example: 'img_12345',
   })
   imageId: string;
@@ -97,14 +88,4 @@ export class MemberDto {
     example: 'https://example.com/images/jane.jpg',
   })
   imageUrl: string;
-
-  @ApiResponseProperty({
-    example: new Date(),
-  })
-  createdAt: Date;
-
-  @ApiResponseProperty({
-    example: new Date(),
-  })
-  updatedAt: Date;
 }

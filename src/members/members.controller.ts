@@ -26,6 +26,7 @@ import {
   ApiOkResponsePaginated,
   ApiSuccessResponse,
 } from '@shared/decorators';
+import { GetParam } from '@shared/dto';
 import {
   ApiErrorResponse,
   ApiSuccessResponseDto,
@@ -132,9 +133,9 @@ export class MembersController {
     description: 'An unexpected error occured',
   })
   @Get(':id')
-  async findOne(@Param('id') id: string) {
+  async findOne(@Param() params: GetParam) {
     try {
-      const response = await this.membersService.findOneById(id);
+      const response = await this.membersService.findOneById(params.id);
       return new ApiSuccessResponseDto(
         response,
         HttpStatus.OK,
@@ -200,13 +201,13 @@ export class MembersController {
   })
   @Patch(':id')
   async update(
-    @Param('id') id: string,
+    @Param() params: GetParam,
     @UploadedFile()
     file: Express.Multer.File,
     @Body() dto: UpdateMemberDto,
   ) {
     try {
-      const response = await this.membersService.update(id, dto, file);
+      const response = await this.membersService.update(params.id, dto, file);
       return new ApiSuccessResponseDto(
         response,
         HttpStatus.OK,
@@ -233,9 +234,9 @@ export class MembersController {
     description: 'An unexpected error occured',
   })
   @Delete(':id')
-  async remove(@Param('id') id: string) {
+  async remove(@Param() params: GetParam) {
     try {
-      const response = await this.membersService.remove(id);
+      const response = await this.membersService.remove(params.id);
       return new ApiSuccessResponseDto(
         response,
         HttpStatus.OK,

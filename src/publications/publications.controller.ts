@@ -19,7 +19,6 @@ import {
   ApiBody,
   ApiConsumes,
   ApiNotFoundResponse,
-  ApiTags,
 } from '@nestjs/swagger';
 import {
   ApiCreatedSuccessResponse,
@@ -32,8 +31,8 @@ import {
   ApiErrorResponse,
   ApiSuccessResponseDto,
   ApiSuccessResponseNull,
+  throwError,
 } from '@utils/responses';
-import { throwError } from 'rxjs';
 
 import {
   CreatePublicationDto,
@@ -44,7 +43,6 @@ import {
 } from './dto';
 import { PublicationsService } from './publications.service';
 
-@ApiTags('Publications Controller')
 @Controller('publications')
 export class PublicationsController {
   private logger = new Logger(PublicationsController.name);
