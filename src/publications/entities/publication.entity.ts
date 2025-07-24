@@ -22,10 +22,18 @@ export class Publication extends BaseEntity {
   @Prop()
   profileImageUrl: string;
 
-  @Prop({ unique: true })
+  @Prop({
+    unique: true,
+    sparse: true,
+    set: (v: string) => (v === '' ? null : v),
+  })
   postImageId: string;
 
-  @Prop({ unique: true })
+  @Prop({
+    unique: true,
+    sparse: true,
+    set: (v: string) => (v === '' ? null : v),
+  })
   postImageUrl?: string;
 
   @Prop()
@@ -43,7 +51,11 @@ export class Publication extends BaseEntity {
   @Prop({ default: 0 })
   likes: number;
 
-  @Prop({ unique: true })
+  @Prop({
+    unique: true,
+    sparse: true,
+    set: (v: string) => (v === '' ? null : v),
+  })
   slug: string;
 }
 

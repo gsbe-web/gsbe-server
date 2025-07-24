@@ -13,10 +13,18 @@ import { BaseEntity } from '@shared/entities';
   },
 })
 export class Event extends BaseEntity {
-  @Prop({ unique: true })
+  @Prop({
+    unique: true,
+    sparse: true,
+    set: (v: string) => (v === '' ? null : v),
+  })
   imageId: string;
 
-  @Prop({ unique: true })
+  @Prop({
+    unique: true,
+    sparse: true,
+    set: (v: string) => (v === '' ? null : v),
+  })
   imageUrl?: string;
 
   @Prop()
@@ -31,7 +39,11 @@ export class Event extends BaseEntity {
   @Prop()
   description?: string;
 
-  @Prop({ unique: true })
+  @Prop({
+    unique: true,
+    sparse: true,
+    set: (v: string) => (v === '' ? null : v),
+  })
   slug: string;
 }
 

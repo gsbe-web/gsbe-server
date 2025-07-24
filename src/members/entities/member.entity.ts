@@ -13,7 +13,11 @@ import { BaseEntity } from '@shared/entities';
   },
 })
 export class Member extends BaseEntity {
-  @Prop({ unique: true })
+  @Prop({
+    unique: true,
+    sparse: true,
+    set: (v: string) => (v === '' ? null : v),
+  })
   slug: string;
 
   @Prop()
@@ -28,22 +32,46 @@ export class Member extends BaseEntity {
   @Prop()
   description?: string;
 
-  @Prop({ unique: true })
+  @Prop({
+    unique: true,
+    sparse: true,
+    set: (v: string) => (v === '' ? null : v),
+  })
   imageId?: string;
 
-  @Prop({ unique: true })
+  @Prop({
+    unique: true,
+    sparse: true,
+    set: (v: string) => (v === '' ? null : v),
+  })
   imageUrl?: string;
 
-  @Prop({ unique: true })
+  @Prop({
+    unique: true,
+    sparse: true,
+    set: (v: string) => (v === '' ? null : v),
+  })
   email?: string;
 
-  @Prop({ unique: true })
+  @Prop({
+    unique: true,
+    sparse: true,
+    set: (v: string) => (v === '' ? null : v),
+  })
   linkedinUrl?: string;
 
-  @Prop({ unique: true })
+  @Prop({
+    unique: true,
+    sparse: true,
+    set: (v: string) => (v === '' ? null : v),
+  })
   twitterUrl?: string;
 
-  @Prop({ unique: true })
+  @Prop({
+    unique: true,
+    sparse: true,
+    set: (v: string) => (v === '' ? null : v),
+  })
   instagramUrl?: string;
 }
 
