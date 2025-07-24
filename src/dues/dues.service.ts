@@ -1,5 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
+import { generateFilter } from '@utils/helpers';
 import { Connection, Model } from 'mongoose';
 
 import {
@@ -88,16 +89,36 @@ export class DuesService {
   }
 
   async findAll(
-    _query: FindDuesQueryDto,
+    query: FindDuesQueryDto,
   ): Promise<{ rows: Due[]; count: number }> {
-    return { rows: [], count: 0 };
+    const { pageFilter, searchFilter } = generateFilter(query);
+
+    const dues = await this.dueModel
+      .find({ ...searchFilter })
+      .skip(pageFilter.skip)
+      .limit(pageFilter.take)
+      .sort(pageFilter.orderBy);
+
+    const duesCount = await this.dueModel.countDocuments({
+      ...searchFilter,
+    });
+    return { rows: dues, count: duesCount };
   }
 
-  async findOne(_id: string): Promise<Due> {
-    return;
+  async findOne(id: string): Promise<Due> {
+    const due = await this.dueModel.findById(id);
+    if (!due) {
+      throw new NotFoundException('Due not found');
+    }
+
+    return due;
   }
 
-  async remove(_id: string): Promise<boolean> {
-    return;
+  async remove(id: string): Promise<boolean> {
+    const due = await this.dueModel.findByIdAndDelete(id);
+    if (!due) {
+      throw new NotFoundException('Due not found');
+    }
+    return true;
   }
 }
