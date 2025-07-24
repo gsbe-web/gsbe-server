@@ -28,6 +28,7 @@ export class PaystackService {
       amount: payload.amount * 100,
       email: email,
       currency: payload.currency,
+      callback_url: `${this.configService.get<string>('CLIENT_URL')}/dues?success=true`,
       metadata: {
         paymentId,
       },
