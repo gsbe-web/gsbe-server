@@ -24,6 +24,7 @@
     "postinstall": "husky"
   },
   "dependencies": {
+    "@nestjs-modules/mailer": "^2.0.2",
     "@nestjs/axios": "^4.0.1",
     "@nestjs/class-transformer": "^0.4.0",
     "@nestjs/common": "^11.1.3",
@@ -44,6 +45,8 @@
     "lint-staged": "^16.1.0",
     "mongoose": "^8.16.3",
     "multer": "^2.0.1",
+    "nodemailer": "^7.0.5",
+    "pug": "^3.0.3",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.2",
     "streamifier": "^0.1.1"
@@ -60,6 +63,7 @@
     "@types/jest": "^29.5.14",
     "@types/multer": "^1.4.13",
     "@types/node": "^24.0.0",
+    "@types/nodemailer": "^6.4.17",
     "@types/streamifier": "^0.1.2",
     "@types/supertest": "^6.0.3",
     "@typescript-eslint/eslint-plugin": "^8.34.0",
@@ -120,7 +124,9 @@
       "^@members(.*)$": "<rootDir>/src/members/$1",
       "^@publications(.*)$": "<rootDir>/src/publications/$1",
       "^@shared(.*)$": "<rootDir>/src/shared/$1",
-      "^@utils(.*)$": "<rootDir>/src/utils/$1"
+      "^@utils(.*)$": "<rootDir>/src/utils/$1",
+      "^@notifications(.*)$": "<rootDir>/src/notifications/$1",
+      "^@contact(.*)$": "<rootDir>/src/contact/$1"
     }
   },
   "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
