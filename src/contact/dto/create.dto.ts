@@ -26,7 +26,7 @@ export class CreateContactDto {
   subject: string;
 
   @ApiProperty({
-    example: faker.phone.number({ style: 'international' }),
+    example: '+233558782245',
     description: 'The phone number of the sender',
   })
   @IsNotEmpty()

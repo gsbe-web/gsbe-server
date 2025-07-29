@@ -11,7 +11,10 @@ import {
   ApiBadRequestResponse,
   ApiInternalServerErrorResponse,
 } from '@nestjs/swagger';
-import { ApiSuccessResponse } from '@shared/decorators';
+import {
+  ApiCreatedSuccessResponse,
+  ApiSuccessResponse,
+} from '@shared/decorators';
 import {
   ApiErrorResponse,
   ApiSuccessResponseDto,
@@ -26,7 +29,7 @@ export class ContactController {
   private logger = new Logger(ContactController.name);
   constructor(private readonly contactService: ContactService) {}
 
-  @ApiSuccessResponse({
+  @ApiCreatedSuccessResponse({
     type: CreateContactDto,
     description: 'Contact details submitted successfully',
   })
