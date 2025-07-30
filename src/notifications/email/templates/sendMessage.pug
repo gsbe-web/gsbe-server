@@ -1,0 +1,25 @@
+extends base
+
+block content
+  p Hello Team,
+  p You’ve received a new message from your website contact form.
+
+  hr
+
+  p Sender Details:
+  ul
+    li Full Name: #{name}
+    li Email: #{email}
+    li Phone Number: #{phoneNumber}
+    li Subject: #{subject}
+
+  hr
+
+  p Message:
+  p #{message}
+
+  hr
+
+  p Please reach out to the sender if necessary.
+  p Best regards,
+  p GSBE WEB
