@@ -3,14 +3,9 @@
   "collection": "@nestjs/schematics",
   "sourceRoot": "src",
   "compilerOptions": {
-    "assets": [
-      {
-        "include": "notifications/email/templates/**/*",
-        "outDir": "dist/src"
-      }
-    ],
+    "assets": ["notifications/email/templates/**/*"],
     "watchAssets": true,
     "deleteOutDir": true,
-    "tsConfigPath": "tsconfig.json"
+    "tsConfigPath": "tsconfig.build.json"
   }
 }
