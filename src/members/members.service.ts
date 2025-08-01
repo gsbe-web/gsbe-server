@@ -19,9 +19,11 @@ export class MembersService {
     dto: CreateMemberDto,
     file: Express.Multer.File,
   ): Promise<Member> {
-    const image = await this.cloudinaryService.uploadFile(file);
-    dto.imageId = image.public_id;
-    dto.imageUrl = image.secure_url;
+    if (file) {
+      const image = await this.cloudinaryService.uploadFile(file);
+      dto.imageId = image.public_id;
+      dto.imageUrl = image.secure_url;
+    }
     dto.slug = createSlug(dto.name);
 
     const member = await this.memberModel.create({ ...dto });
