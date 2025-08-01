@@ -4,7 +4,13 @@ import {
   ApiResponseProperty,
 } from '@nestjs/swagger';
 import { GenericResponseDto } from '@shared/dto';
-import { IsEnum, IsNotEmpty, IsOptional, ValidateIf } from 'class-validator';
+import {
+  IsEnum,
+  IsIn,
+  IsNotEmpty,
+  IsOptional,
+  ValidateIf,
+} from 'class-validator';
 
 export enum MemberType {
   EXECUTIVE = 'EXECUTIVE',
@@ -26,6 +32,15 @@ export class MemberDto extends GenericResponseDto {
   })
   @IsNotEmpty()
   name: string;
+
+  @ApiProperty({
+    description: 'The gender of the member',
+    example: 'Female',
+    enum: ['Male', 'Female'],
+  })
+  @IsNotEmpty()
+  @IsIn(['Male', 'Female'])
+  gender: 'Male' | 'Female';
 
   @ApiPropertyOptional({
     description:

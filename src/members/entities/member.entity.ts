@@ -27,6 +27,9 @@ export class Member extends BaseEntity {
   name: string;
 
   @Prop()
+  gender: string;
+
+  @Prop()
   role?: string;
 
   @Prop()
